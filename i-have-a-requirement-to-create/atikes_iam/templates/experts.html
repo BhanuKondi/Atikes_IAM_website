@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}IAM Experts · ATIKES{% endblock %}
+{% block content %}
+<section class="page-hero slim">
+  <div>
+    <p class="eyebrow">Ranked from real activity</p>
+    <h1>IAM Experts Directory</h1>
+    <p>Members appear here automatically when they answer IAM questions. The ranking is based on actual answer counts.</p>
+  </div>
+  <a class="primary-button" href="{{ url_for('qa.questions') }}">Answer Questions</a>
+</section>
+
+<section class="content-shell">
+  <div class="expert-grid">
+    {% for user, answer_total in experts %}
+      <article class="expert-card">
+        <span class="avatar large">{{ user.name[:1] }}</span>
+        <h2>{{ user.name }}</h2>
+        <p>{{ user.title }}</p>
+        {% if user.company %}<small>{{ user.company }}</small>{% endif %}
+        {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
+        <div class="score">{{ answer_total }} answers</div>
+      </article>
+    {% else %}
+      <div class="empty big">No ranked experts yet. Experts will appear once signed-in users post answers.</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

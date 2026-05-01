@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}IAM Q&A · ATIKES{% endblock %}
+{% block content %}
+<section class="page-hero slim">
+  <div>
+    <p class="eyebrow">Community answers</p>
+    <h1>IAM Q&amp;A</h1>
+    <p>Ask practical questions about SailPoint, Okta, RBAC, PAM, access reviews, provisioning, and compliance.</p>
+  </div>
+  <a class="primary-button" href="{{ url_for('qa.ask_question') }}">Ask Question</a>
+</section>
+
+<section class="content-shell two-col">
+  <div class="question-list">
+    {% for question in questions %}
+      <article class="question-card">
+        <div class="answer-count">
+          <strong>{{ question.answers.count() }}</strong>
+          <span>answers</span>
+        </div>
+        <div>
+          <h2><a href="{{ url_for('qa.question_detail', question_id=question.id) }}">{{ question.title }}</a></h2>
+          <p>{{ question.body[:220] }}{% if question.body|length > 220 %}...{% endif %}</p>
+          <div class="tag-row">
+            {% for tag in question.tags.split(",") if tag.strip() %}
+              <a href="{{ url_for('qa.questions', tag=tag.strip()) }}">{{ tag.strip() }}</a>
+            {% endfor %}
+          </div>
+          <small>Asked by {{ question.author.name }} on {{ question.created_at.strftime("%d %b %Y") }}</small>
+        </div>
+      </article>
+    {% else %}
+      <div class="empty big">No IAM questions yet. Be the first to ask.</div>
+    {% endfor %}
+  </div>
+  <aside class="panel compact">
+    <h2>Useful Tags</h2>
+    <div class="tag-cloud">
+      <a href="{{ url_for('qa.questions', tag='sailpoint') }}">sailpoint</a>
+      <a href="{{ url_for('qa.questions', tag='okta') }}">okta</a>
+      <a href="{{ url_for('qa.questions', tag='rbac') }}">rbac</a>
+      <a href="{{ url_for('qa.questions', tag='pam') }}">pam</a>
+      <a href="{{ url_for('qa.questions', tag='access reviews') }}">access reviews</a>
+      <a href="{{ url_for('qa.questions', tag='provisioning') }}">provisioning</a>
+    </div>
+  </aside>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Ask IAM Question · ATIKES{% endblock %}
+{% block content %}
+<section class="form-page">
+  <form class="form-card" method="post">
+    <p class="eyebrow">IAM Q&amp;A</p>
+    <h1>Ask a Question</h1>
+    <label>Question title
+      <input name="title" required minlength="10" placeholder="Example: How should we automate mover access in SailPoint?">
+    </label>
+    <label>Details
+      <textarea name="body" required minlength="20" rows="8" placeholder="Share the tool, business context, current issue, and what you already tried."></textarea>
+    </label>
+    <label>Tags
+      <input name="tags" placeholder="sailpoint, lifecycle, rbac">
+    </label>
+    <button class="primary-button" type="submit">Post Question</button>
+  </form>
+</section>
+{% endblock %}

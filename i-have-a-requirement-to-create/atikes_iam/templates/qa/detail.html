@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ question.title }} · ATIKES Q&A{% endblock %}
+{% block content %}
+<section class="content-shell detail-shell">
+  <article class="question-detail">
+    <div class="tag-row">
+      {% for tag in question.tags.split(",") if tag.strip() %}
+        <a href="{{ url_for('qa.questions', tag=tag.strip()) }}">{{ tag.strip() }}</a>
+      {% endfor %}
+    </div>
+    <h1>{{ question.title }}</h1>
+    <p>{{ question.body }}</p>
+    <small>Asked by {{ question.author.name }} on {{ question.created_at.strftime("%d %b %Y") }}</small>
+  </article>
+
+  <section class="answers">
+    <h2>{{ answers|length }} Answers</h2>
+    {% for answer in answers %}
+      <article class="answer-card">
+        <p>{{ answer.body }}</p>
+        <div class="answer-author">
+          <span class="avatar">{{ answer.author.name[:1] }}</span>
+          <div>
+            <strong>{{ answer.author.name }}</strong>
+            <small>{{ answer.author.title }} · {{ answer.created_at.strftime("%d %b %Y") }}</small>
+          </div>
+        </div>
+      </article>
+    {% else %}
+      <p class="empty">No answers yet. Share your IAM experience below.</p>
+    {% endfor %}
+  </section>
+
+  <form class="form-card answer-form" method="post">
+    <h2>Your Answer</h2>
+    {% if current_user.is_authenticated %}
+      <textarea name="body" required minlength="20" rows="7" placeholder="Write a practical, implementation-ready answer."></textarea>
+      <button class="primary-button" type="submit">Post Answer</button>
+    {% else %}
+      <p>Sign in to answer this question.</p>
+      <a class="primary-button" href="{{ url_for('auth.login', next=request.path) }}">Sign in</a>
+    {% endif %}
+  </form>
+</section>
+{% endblock %}

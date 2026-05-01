@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Live IAM Trends · ATIKES{% endblock %}
+{% block content %}
+<section class="page-hero slim">
+  <div>
+    <p class="eyebrow">Live public feeds</p>
+    <h1>Top IAM Trends</h1>
+    <p>Collected from real identity and cybersecurity websites, filtered for IAM topics, and refreshed with short caching.</p>
+  </div>
+  <a class="primary-button" href="{{ url_for('trends.list_trends', refresh=1) }}">Refresh Now</a>
+</section>
+
+<section class="content-shell">
+  <div class="filter-row">
+    {% for category in categories %}
+      <a class="chip {{ 'active' if category == active_category }}" href="{{ url_for('trends.list_trends', category=category) }}">{{ category }}</a>
+    {% endfor %}
+  </div>
+
+  {% if errors %}
+    <div class="notice">Some sources could not be reached this time. Available sources are still shown below.</div>
+  {% endif %}
+
+  <div class="trend-grid">
+    {% for trend in trends %}
+      <article class="trend-card">
+        <div class="trend-meta">
+          <span>{{ trend.category }}</span>
+          <time>{{ trend.published_at.strftime("%d %b %Y") }}</time>
+        </div>
+        <h2><a href="{{ trend.url }}" target="_blank" rel="noopener">{{ trend.title }}</a></h2>
+        <p>{{ trend.summary or "Open the source article for the full update." }}</p>
+        <div class="trend-source">
+          <span>{{ trend.source }}</span>
+          <small>{{ trend.source_domain }}</small>
+        </div>
+      </article>
+    {% else %}
+      <div class="empty big">No IAM trend items were returned from the configured live feeds.</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
