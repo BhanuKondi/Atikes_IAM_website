@@ -5,12 +5,17 @@
   <div>
     <p class="eyebrow">Live public feeds</p>
     <h1>Top IAM Trends</h1>
-    <p>Collected from real identity and cybersecurity websites, filtered for IAM topics, and refreshed with short caching.</p>
+    <p>Collected from real identity and cybersecurity websites, stored in the database, and filtered for IAM topics.</p>
   </div>
   <a class="primary-button" href="{{ url_for('trends.list_trends', refresh=1) }}">Refresh Now</a>
 </section>
 
 <section class="content-shell">
+  <form class="inline-search" action="{{ url_for('trends.list_trends') }}">
+    <input name="q" value="{{ search }}" placeholder="Search stored IAM trends">
+    <button class="primary-button" type="submit">Search</button>
+  </form>
+
   <div class="filter-row">
     {% for category in categories %}
       <a class="chip {{ 'active' if category == active_category }}" href="{{ url_for('trends.list_trends', category=category) }}">{{ category }}</a>
@@ -31,7 +36,7 @@
         <h2><a href="{{ trend.url }}" target="_blank" rel="noopener">{{ trend.title }}</a></h2>
         <p>{{ trend.summary or "Open the source article for the full update." }}</p>
         <div class="trend-source">
-          <span>{{ trend.source }}</span>
+          <span>{{ trend.source.name }}</span>
           <small>{{ trend.source_domain }}</small>
         </div>
       </article>

@@ -21,6 +21,7 @@
       <a class="{{ 'active' if request.blueprint == 'qa' }}" href="{{ url_for('qa.questions') }}">Q&amp;A</a>
       <a class="{{ 'active' if request.blueprint == 'trends' }}" href="{{ url_for('trends.list_trends') }}">New Trends</a>
       <a class="{{ 'active' if request.blueprint == 'experts' }}" href="{{ url_for('experts.directory') }}">Experts</a>
+      <a class="{{ 'active' if request.blueprint == 'events' }}" href="{{ url_for('events.list_events') }}">Events</a>
     </nav>
     <div class="account">
       {% if current_user.is_authenticated %}
@@ -63,6 +64,7 @@
       <a href="{{ url_for('trends.list_trends') }}">Live IAM trends</a>
       <a href="{{ url_for('qa.questions') }}">Community Q&amp;A</a>
       <a href="{{ url_for('experts.directory') }}">Expert directory</a>
+      <a href="{{ url_for('events.list_events') }}">Upcoming events</a>
     </div>
     <div>
       <h3>ATIKES Focus</h3>

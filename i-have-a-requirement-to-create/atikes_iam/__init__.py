@@ -4,6 +4,7 @@ from pathlib import Path
 from .config import Config
 from .extensions import db, login_manager
 from .models import User
+from .services.bootstrap import sync_trend_sources
 
 
 def create_app(config_class=Config):
@@ -21,6 +22,7 @@ def create_app(config_class=Config):
         return db.session.get(User, int(user_id))
 
     from .routes.auth import auth_bp
+    from .routes.events import events_bp
     from .routes.experts import experts_bp
     from .routes.main import main_bp
     from .routes.qa import qa_bp
@@ -28,11 +30,13 @@ def create_app(config_class=Config):
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(events_bp)
     app.register_blueprint(trends_bp)
     app.register_blueprint(qa_bp)
     app.register_blueprint(experts_bp)
 
     with app.app_context():
         db.create_all()
+        sync_trend_sources(app)
 
     return app

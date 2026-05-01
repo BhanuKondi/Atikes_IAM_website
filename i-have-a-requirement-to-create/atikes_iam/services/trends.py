@@ -8,6 +8,10 @@ from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
 
 from flask import current_app
+from sqlalchemy import or_
+
+from ..extensions import db
+from ..models import Trend, TrendSource, utcnow
 
 
 _cache = {"expires_at": 0, "items": [], "errors": []}
@@ -103,17 +107,17 @@ def _source_domain(url):
 def fetch_live_trends(force=False):
     now = time()
     if not force and _cache["expires_at"] > now:
-        return _cache["items"], _cache["errors"], False
+        return get_stored_trends(), _cache["errors"], False
 
-    feeds = current_app.config["TRENDS_FEEDS"]
+    sources = TrendSource.query.filter_by(is_active=True).all()
     keywords = current_app.config["IAM_KEYWORDS"]
     items = []
     errors = []
 
-    for feed in feeds:
+    for source in sources:
         try:
             request = Request(
-                feed["url"],
+                source.feed_url,
                 headers={"User-Agent": "ATIKES-IAM-Trends/1.0"},
             )
             with urlopen(request, timeout=8) as response:
@@ -123,28 +127,62 @@ def fetch_live_trends(force=False):
 
             for entry in entries[:12]:
                 link = entry.get("link", "")
+                if not link:
+                    continue
                 item = {
                     "title": entry.get("title", "Untitled IAM update").strip(),
                     "summary": _summary(entry),
                     "url": link,
-                    "source": feed["name"],
-                    "source_domain": _source_domain(link or feed["url"]),
-                    "category": feed["category"],
+                    "source_domain": _source_domain(link or source.feed_url),
+                    "category": source.category,
                     "published_at": _entry_date(entry),
+                    "source": source,
                 }
                 item["score"] = _score(item, keywords)
                 if item["score"] > 0:
                     items.append(item)
+                    _upsert_trend(item)
+            source.last_fetched_at = utcnow()
+            source.last_error = ""
         except Exception as exc:
-            errors.append(f"{feed['name']}: {exc}")
+            source.last_error = str(exc)
+            errors.append(f"{source.name}: {exc}")
 
+    db.session.commit()
     items.sort(key=lambda row: (row["published_at"], row["score"]), reverse=True)
     items = items[:36]
     _cache.update(
         {
             "expires_at": now + current_app.config["TRENDS_CACHE_SECONDS"],
-            "items": items,
+            "items": [item["url"] for item in items],
             "errors": errors,
         }
     )
-    return items, errors, True
+    return get_stored_trends(), errors, True
+
+
+def _upsert_trend(item):
+    trend = Trend.query.filter_by(url=item["url"]).first()
+    if trend is None:
+        trend = Trend(url=item["url"], source=item["source"])
+        db.session.add(trend)
+    trend.title = item["title"][:300]
+    trend.summary = item["summary"]
+    trend.source_domain = item["source_domain"][:180]
+    trend.category = item["category"]
+    trend.score = item["score"]
+    trend.published_at = item["published_at"]
+    trend.fetched_at = utcnow()
+    trend.source = item["source"]
+
+
+def get_stored_trends(limit=36, category=None, search=None):
+    query = Trend.query
+    if category and category != "All":
+        query = query.filter_by(category=category)
+    if search:
+        pattern = f"%{search}%"
+        query = query.filter(
+            or_(Trend.title.ilike(pattern), Trend.summary.ilike(pattern), Trend.category.ilike(pattern))
+        )
+    return query.order_by(Trend.published_at.desc(), Trend.score.desc()).limit(limit).all()

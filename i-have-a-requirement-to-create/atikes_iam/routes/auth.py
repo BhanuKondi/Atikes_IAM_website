@@ -3,6 +3,7 @@ from flask_login import current_user, login_user, logout_user
 
 from ..extensions import db
 from ..models import User
+from ..services.experts import refresh_expert_profile
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -27,6 +28,8 @@ def register():
             user = User(name=name, email=email, title=title)
             user.set_password(password)
             db.session.add(user)
+            db.session.flush()
+            refresh_expert_profile(user)
             db.session.commit()
             login_user(user)
             flash("Welcome to the ATIKES IAM community.", "success")

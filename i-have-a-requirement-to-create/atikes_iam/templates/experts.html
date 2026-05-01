@@ -12,14 +12,14 @@
 
 <section class="content-shell">
   <div class="expert-grid">
-    {% for user, answer_total in experts %}
+    {% for expert in experts %}
       <article class="expert-card">
-        <span class="avatar large">{{ user.name[:1] }}</span>
-        <h2>{{ user.name }}</h2>
-        <p>{{ user.title }}</p>
-        {% if user.company %}<small>{{ user.company }}</small>{% endif %}
-        {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
-        <div class="score">{{ answer_total }} answers</div>
+        <span class="avatar large">{{ expert.display_name[:1] }}</span>
+        <h2>{{ expert.display_name }}</h2>
+        <p>{{ expert.title }}</p>
+        {% if expert.company %}<small>{{ expert.company }}</small>{% endif %}
+        {% if expert.bio %}<p>{{ expert.bio }}</p>{% endif %}
+        <div class="score">{{ expert.answer_total }} answers · {{ expert.question_total }} questions</div>
       </article>
     {% else %}
       <div class="empty big">No ranked experts yet. Experts will appear once signed-in users post answers.</div>

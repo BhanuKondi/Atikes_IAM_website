@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 
 from ..extensions import db
 from ..models import Answer, Question
+from ..services.experts import refresh_expert_profile
 
 
 qa_bp = Blueprint("qa", __name__, url_prefix="/qa")
@@ -30,6 +31,8 @@ def ask_question():
         else:
             question = Question(title=title, body=body, tags=tags, author=current_user)
             db.session.add(question)
+            db.session.flush()
+            refresh_expert_profile(current_user)
             db.session.commit()
             flash("Question posted.", "success")
             return redirect(url_for("qa.question_detail", question_id=question.id))
@@ -49,6 +52,8 @@ def question_detail(question_id):
         else:
             answer = Answer(body=body, author=current_user, question=question)
             db.session.add(answer)
+            db.session.flush()
+            refresh_expert_profile(current_user)
             db.session.commit()
             flash("Answer posted.", "success")
             return redirect(url_for("qa.question_detail", question_id=question.id))

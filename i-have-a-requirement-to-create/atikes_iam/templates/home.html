@@ -38,7 +38,7 @@
           <div>
             <h3>{{ trend.title }}</h3>
             <p>{{ trend.summary or "Read the latest IAM update from this source." }}</p>
-            <small>{{ trend.source }} · {{ trend.published_at.strftime("%d %b %Y") }}</small>
+            <small>{{ trend.source.name }} · {{ trend.published_at.strftime("%d %b %Y") }}</small>
           </div>
         </a>
       {% else %}
@@ -76,10 +76,10 @@
       </div>
       {% for expert in experts %}
         <div class="expert-row">
-          <span class="avatar">{{ expert.name[:1] }}</span>
+          <span class="avatar">{{ expert.display_name[:1] }}</span>
           <div>
-            <strong>{{ expert.name }}</strong>
-            <small>{{ expert.answer_count }} answers · {{ expert.title }}</small>
+            <strong>{{ expert.display_name }}</strong>
+            <small>{{ expert.answer_total }} answers · {{ expert.title }}</small>
           </div>
         </div>
       {% else %}
@@ -87,8 +87,24 @@
       {% endfor %}
     </article>
     <article class="panel compact accent">
-      <h2>ATIKES IAM Focus</h2>
-      <p>Identity lifecycle, access reviews, RBAC, PAM, cloud integrations, and audit-ready governance.</p>
+      <div class="panel-head">
+        <h2>Upcoming Events</h2>
+        <a href="{{ url_for('events.list_events') }}">View all</a>
+      </div>
+      {% for event in events %}
+        <div class="event-row">
+          <time>
+            <strong>{{ event.starts_at.strftime("%d") }}</strong>
+            <span>{{ event.starts_at.strftime("%b") }}</span>
+          </time>
+          <div>
+            <strong>{{ event.title }}</strong>
+            <small>{{ event.organizer or event.event_type }} · {{ event.location }}</small>
+          </div>
+        </div>
+      {% else %}
+        <p class="empty">Upcoming events will appear here from the events database table.</p>
+      {% endfor %}
     </article>
   </aside>
 </section>
