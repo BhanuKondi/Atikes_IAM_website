@@ -9,6 +9,9 @@
       {% endfor %}
     </div>
     <h1>{{ question.title }}</h1>
+    {% if question.status != "approved" %}
+      <span class="status-pill">{{ question.status }}</span>
+    {% endif %}
     <p>{{ question.body }}</p>
     <small>Asked by {{ question.author.name }} on {{ question.created_at.strftime("%d %b %Y") }}</small>
   </article>
@@ -22,7 +25,10 @@
           <span class="avatar">{{ answer.author.name[:1] }}</span>
           <div>
             <strong>{{ answer.author.name }}</strong>
-            <small>{{ answer.author.title }} · {{ answer.created_at.strftime("%d %b %Y") }}</small>
+            <small>{{ answer.author.title }} - {{ answer.created_at.strftime("%d %b %Y") }}</small>
+            {% if answer.status != "approved" %}
+              <small class="status-inline">{{ answer.status }}</small>
+            {% endif %}
           </div>
         </div>
       </article>
@@ -35,7 +41,7 @@
     <h2>Your Answer</h2>
     {% if current_user.is_authenticated %}
       <textarea name="body" required minlength="20" rows="7" placeholder="Write a practical, implementation-ready answer."></textarea>
-      <button class="primary-button" type="submit">Post Answer</button>
+      <button class="primary-button" type="submit">Submit Answer for Review</button>
     {% else %}
       <p>Sign in to answer this question.</p>
       <a class="primary-button" href="{{ url_for('auth.login', next=request.path) }}">Sign in</a>

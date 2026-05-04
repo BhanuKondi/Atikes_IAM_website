@@ -10,7 +10,7 @@ main_bp = Blueprint("main", __name__)
 @main_bp.route("/")
 def home():
     trends, trend_errors, refreshed = fetch_live_trends()
-    questions = Question.query.order_by(Question.created_at.desc()).limit(5).all()
+    questions = Question.query.filter_by(status="approved").order_by(Question.created_at.desc()).limit(5).all()
     experts = ExpertProfile.query.filter_by(is_listed=True).order_by(
         ExpertProfile.answer_total.desc(),
         ExpertProfile.updated_at.desc(),
@@ -22,9 +22,9 @@ def home():
         .all()
     )
     stats = {
-        "trends": Trend.query.count(),
-        "questions": Question.query.count(),
-        "answers": Answer.query.count(),
+        "trends": Trend.query.filter_by(status="approved").count(),
+        "questions": Question.query.filter_by(status="approved").count(),
+        "answers": Answer.query.filter_by(status="approved").count(),
         "experts": ExpertProfile.query.filter_by(is_listed=True).count(),
     }
     return render_template(

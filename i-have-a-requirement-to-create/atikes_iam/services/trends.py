@@ -174,10 +174,14 @@ def _upsert_trend(item):
     trend.published_at = item["published_at"]
     trend.fetched_at = utcnow()
     trend.source = item["source"]
+    if not trend.status:
+        trend.status = "pending"
 
 
-def get_stored_trends(limit=36, category=None, search=None):
+def get_stored_trends(limit=36, category=None, search=None, approved_only=True):
     query = Trend.query
+    if approved_only:
+        query = query.filter_by(status="approved")
     if category and category != "All":
         query = query.filter_by(category=category)
     if search:

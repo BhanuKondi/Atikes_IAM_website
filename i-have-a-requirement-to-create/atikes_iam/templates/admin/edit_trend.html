@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Edit Trend - ATIKES Admin{% endblock %}
+{% block content %}
+<section class="form-page">
+  <form class="form-card" method="post">
+    <p class="eyebrow">Admin review</p>
+    <h1>Edit Trend</h1>
+    <label>Title <input name="title" value="{{ trend.title }}" required></label>
+    <label>Category <input name="category" value="{{ trend.category }}" required></label>
+    <label>URL <input name="url" value="{{ trend.url }}" required></label>
+    <label>Summary <textarea name="summary" rows="8">{{ trend.summary }}</textarea></label>
+    <div class="button-row">
+      <button class="ghost-button" name="action" value="save" type="submit">Save</button>
+      <button class="primary-button" name="action" value="approve" type="submit">Post</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

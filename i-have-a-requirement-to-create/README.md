@@ -6,6 +6,7 @@ Flask website for ATIKES with:
 - User sign up, sign in, questions, answers, and voting-ready data model
 - Expert directory ranked from real answer activity
 - Upcoming events stored in a dedicated publishing table
+- Admin/user modes with approval workflow for trends, questions, and answers
 - ATIKES-branded home page inspired by the provided reference design
 
 ## Run Locally
@@ -36,13 +37,39 @@ atikes_iam/
     qa.py               Q&A pages and posting
     experts.py          Directory ranked by answer activity
     events.py           Upcoming events page
+    admin.py            Admin review, edit, and approve workflow
   templates/            Jinja pages and partials
   static/
     css/styles.css      Main responsive UI
     js/app.js           Small UI helpers
 run.py
-instance/
-  atikes_iam.sqlite     Created automatically at first run
+atikes_mysql_schema_seed.sql  MySQL schema and seed data
+```
+
+## Use Local MySQL
+
+The app now defaults to MySQL on your local machine:
+
+```text
+mysql+pymysql://root:<password>@127.0.0.1:3306/atikes_iam
+```
+
+Set your password before running Flask:
+
+```powershell
+$env:MYSQL_USER="root"
+$env:MYSQL_PASSWORD="your_mysql_password"
+$env:MYSQL_HOST="127.0.0.1"
+$env:MYSQL_PORT="3306"
+$env:MYSQL_DATABASE="atikes_iam"
+python run.py
+```
+
+If you want to use SQLite temporarily:
+
+```powershell
+$env:DB_ENGINE="sqlite"
+python run.py
 ```
 
 ## Live Trend Sources
@@ -51,7 +78,7 @@ Feeds are configured in `atikes_iam/config.py`. The page fetches public feeds, f
 
 ## Database Tables
 
-The backend SQLite database is created automatically in `instance/atikes_iam.sqlite`.
+The backend MySQL database is `atikes_iam`. Import `atikes_mysql_schema_seed.sql` first if the tables do not exist.
 
 - `user`: registered community members
 - `trend_source`: configured real IAM RSS/source websites
@@ -61,4 +88,11 @@ The backend SQLite database is created automatically in `instance/atikes_iam.sql
 - `expert_profile`: expert directory rows generated from user Q&A activity
 - `upcoming_event`: future IAM webinars, conferences, and sessions
 
-The trends page reads from `trend`; refresh first updates `trend_source` and stores new articles into `trend`. Experts are not sample cards: `expert_profile` is updated when users ask or answer questions, and listed experts require at least one answer.
+Trends, questions, and answers use `status` moderation. Newly fetched trends and newly posted Q&A content are `pending`. Admin users review, edit, and approve them from `/admin/`; approved records become visible to signed-in users. Experts are not sample cards: `expert_profile` is updated from approved Q&A activity, and listed experts require at least one approved answer.
+
+Seed admin account from `atikes_mysql_schema_seed.sql`:
+
+```text
+admin@atikes.com
+Atikes@123
+```

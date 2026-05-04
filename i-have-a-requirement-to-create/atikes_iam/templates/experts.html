@@ -1,29 +1,60 @@
 {% extends "base.html" %}
-{% block title %}IAM Experts · ATIKES{% endblock %}
+{% block title %}IAM Experts - ATIKES{% endblock %}
 {% block content %}
 <section class="page-hero slim">
   <div>
     <p class="eyebrow">Ranked from real activity</p>
     <h1>IAM Experts Directory</h1>
-    <p>Members appear here automatically when they answer IAM questions. The ranking is based on actual answer counts.</p>
+    <p>Members appear here automatically when they answer approved IAM questions. The ranking is based on approved answer counts.</p>
   </div>
   <a class="primary-button" href="{{ url_for('qa.questions') }}">Answer Questions</a>
 </section>
 
 <section class="content-shell">
-  <div class="expert-grid">
-    {% for expert in experts %}
+  <h2>Top 3 Experts</h2>
+  <div class="expert-grid top-experts">
+    {% for expert in top_experts %}
       <article class="expert-card">
         <span class="avatar large">{{ expert.display_name[:1] }}</span>
         <h2>{{ expert.display_name }}</h2>
         <p>{{ expert.title }}</p>
         {% if expert.company %}<small>{{ expert.company }}</small>{% endif %}
         {% if expert.bio %}<p>{{ expert.bio }}</p>{% endif %}
-        <div class="score">{{ expert.answer_total }} answers · {{ expert.question_total }} questions</div>
+        <div class="score">{{ expert.answer_total }} answers - {{ expert.question_total }} questions</div>
       </article>
     {% else %}
-      <div class="empty big">No ranked experts yet. Experts will appear once signed-in users post answers.</div>
+      <div class="empty big">No ranked experts yet. Experts will appear once signed-in users post approved answers.</div>
     {% endfor %}
+  </div>
+
+  <h2 class="section-title">All Other Experts</h2>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Company</th>
+          <th>Answers</th>
+          <th>Questions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expert in remaining_experts %}
+          <tr>
+            <td>{{ expert.display_name }}</td>
+            <td>{{ expert.title }}</td>
+            <td>{{ expert.company or "-" }}</td>
+            <td>{{ expert.answer_total }}</td>
+            <td>{{ expert.question_total }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5">No additional experts yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </section>
 {% endblock %}

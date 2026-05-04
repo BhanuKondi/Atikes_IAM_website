@@ -18,10 +18,21 @@ class User(UserMixin, db.Model):
     title = db.Column(db.String(160), default="IAM Community Member")
     company = db.Column(db.String(160), default="")
     bio = db.Column(db.Text, default="")
+    role = db.Column(db.String(30), default="user", index=True)
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow)
 
-    questions = db.relationship("Question", back_populates="author", lazy="dynamic")
-    answers = db.relationship("Answer", back_populates="author", lazy="dynamic")
+    questions = db.relationship(
+        "Question",
+        back_populates="author",
+        lazy="dynamic",
+        foreign_keys="Question.author_id",
+    )
+    answers = db.relationship(
+        "Answer",
+        back_populates="author",
+        lazy="dynamic",
+        foreign_keys="Answer.author_id",
+    )
     expert_profile = db.relationship(
         "ExpertProfile",
         back_populates="user",
@@ -37,7 +48,11 @@ class User(UserMixin, db.Model):
 
     @property
     def answer_count(self):
-        return self.answers.count()
+        return self.answers.filter_by(status="approved").count()
+
+    @property
+    def is_admin(self):
+        return self.role == "admin"
 
 
 class TrendSource(db.Model):
@@ -64,9 +79,13 @@ class Trend(db.Model):
     score = db.Column(db.Integer, default=0, index=True)
     published_at = db.Column(db.DateTime(timezone=True), default=utcnow, index=True)
     fetched_at = db.Column(db.DateTime(timezone=True), default=utcnow, index=True)
+    status = db.Column(db.String(30), default="pending", index=True)
+    approved_at = db.Column(db.DateTime(timezone=True))
+    approved_by_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     source_id = db.Column(db.Integer, db.ForeignKey("trend_source.id"), nullable=False)
 
     source = db.relationship("TrendSource", back_populates="trends")
+    approved_by = db.relationship("User", foreign_keys=[approved_by_id])
 
 
 class Question(db.Model):
@@ -74,10 +93,14 @@ class Question(db.Model):
     title = db.Column(db.String(220), nullable=False)
     body = db.Column(db.Text, nullable=False)
     tags = db.Column(db.String(255), default="")
+    status = db.Column(db.String(30), default="pending", index=True)
+    approved_at = db.Column(db.DateTime(timezone=True))
+    approved_by_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow, index=True)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    author = db.relationship("User", back_populates="questions")
+    author = db.relationship("User", back_populates="questions", foreign_keys=[author_id])
+    approved_by = db.relationship("User", foreign_keys=[approved_by_id])
     answers = db.relationship(
         "Answer",
         back_populates="question",
@@ -85,15 +108,23 @@ class Question(db.Model):
         lazy="dynamic",
     )
 
+    @property
+    def approved_answer_count(self):
+        return self.answers.filter_by(status="approved").count()
+
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(30), default="pending", index=True)
+    approved_at = db.Column(db.DateTime(timezone=True))
+    approved_by_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow, index=True)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
 
-    author = db.relationship("User", back_populates="answers")
+    author = db.relationship("User", back_populates="answers", foreign_keys=[author_id])
+    approved_by = db.relationship("User", foreign_keys=[approved_by_id])
     question = db.relationship("Question", back_populates="answers")
 
 

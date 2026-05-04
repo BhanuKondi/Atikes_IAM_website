@@ -12,7 +12,7 @@ def refresh_expert_profile(user):
     profile.title = user.title
     profile.company = user.company
     profile.bio = user.bio
-    profile.answer_total = Answer.query.filter_by(author_id=user.id).count()
-    profile.question_total = Question.query.filter_by(author_id=user.id).count()
+    profile.answer_total = Answer.query.filter_by(author_id=user.id, status="approved").count()
+    profile.question_total = Question.query.filter_by(author_id=user.id, status="approved").count()
     profile.is_listed = profile.answer_total > 0
     return profile

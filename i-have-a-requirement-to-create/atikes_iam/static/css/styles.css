@@ -229,12 +229,17 @@ a {
 
 .searchbar input,
 .form-card input,
+.form-card select,
 .form-card textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 13px 14px;
   font: inherit;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .searchbar input {
@@ -680,6 +685,79 @@ a {
   text-align: center;
 }
 
+.section-title {
+  margin-top: 36px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.data-table th {
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.admin-shell {
+  display: grid;
+  gap: 22px;
+}
+
+.review-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.review-row small {
+  display: block;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.review-actions,
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-actions form {
+  margin: 0;
+}
+
+.status-pill,
+.status-inline {
+  display: inline-flex;
+  width: fit-content;
+  margin: 8px 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #92400e;
+  background: #fef3c7;
+  font-weight: 800;
+}
+
 .score {
   margin-top: 16px;
   padding: 10px;
@@ -798,7 +876,14 @@ a {
   .expert-grid,
   .event-grid,
   .inline-search,
-  .event-card {
+  .event-card,
+  .review-row {
     grid-template-columns: 1fr;
+  }
+
+  .review-actions,
+  .button-row {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

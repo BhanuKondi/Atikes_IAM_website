@@ -15,19 +15,23 @@
       <span class="brand-mark">A</span>
       <span>ATIKES</span>
     </a>
-    <button class="nav-toggle" data-nav-toggle aria-label="Open navigation">☰</button>
+    <button class="nav-toggle" data-nav-toggle aria-label="Open navigation">Menu</button>
     <nav class="nav" data-nav>
       <a class="{{ 'active' if request.endpoint == 'main.home' }}" href="{{ url_for('main.home') }}">Home</a>
-      <a class="{{ 'active' if request.blueprint == 'qa' }}" href="{{ url_for('qa.questions') }}">Q&amp;A</a>
       <a class="{{ 'active' if request.blueprint == 'trends' }}" href="{{ url_for('trends.list_trends') }}">New Trends</a>
+      <a class="{{ 'active' if request.blueprint == 'qa' }}" href="{{ url_for('qa.questions') }}">Q&amp;A</a>
       <a class="{{ 'active' if request.blueprint == 'experts' }}" href="{{ url_for('experts.directory') }}">Experts</a>
       <a class="{{ 'active' if request.blueprint == 'events' }}" href="{{ url_for('events.list_events') }}">Events</a>
+      {% if current_user.is_authenticated and current_user.is_admin %}
+        <a class="{{ 'active' if request.blueprint == 'admin' }}" href="{{ url_for('admin.dashboard') }}">Admin</a>
+      {% endif %}
     </nav>
     <div class="account">
       {% if current_user.is_authenticated %}
         <span class="avatar">{{ current_user.name[:1] }}</span>
         <div>
           <strong>{{ current_user.name }}</strong>
+          <small>{{ "Admin" if current_user.is_admin else "User" }}</small>
           <a href="{{ url_for('auth.logout') }}">Sign out</a>
         </div>
       {% else %}

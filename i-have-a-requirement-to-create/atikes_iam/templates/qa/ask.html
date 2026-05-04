@@ -12,9 +12,18 @@
       <textarea name="body" required minlength="20" rows="8" placeholder="Share the tool, business context, current issue, and what you already tried."></textarea>
     </label>
     <label>Tags
-      <input name="tags" placeholder="sailpoint, lifecycle, rbac">
+      <select name="tag_choice" data-tag-select required>
+        <option value="">Select IAM tag</option>
+        {% for tag in tag_options %}
+          <option value="{{ tag }}">{{ tag }}</option>
+        {% endfor %}
+        <option value="Other">Other</option>
+      </select>
     </label>
-    <button class="primary-button" type="submit">Post Question</button>
+    <label class="hidden" data-other-tag-wrap>Other tag
+      <input name="other_tag" data-other-tag placeholder="Enter another IAM tag">
+    </label>
+    <button class="primary-button" type="submit">Submit for Review</button>
   </form>
 </section>
 {% endblock %}

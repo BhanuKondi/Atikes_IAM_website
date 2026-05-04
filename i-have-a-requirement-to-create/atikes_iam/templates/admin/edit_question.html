@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Edit Question - ATIKES Admin{% endblock %}
+{% block content %}
+<section class="form-page">
+  <form class="form-card" method="post">
+    <p class="eyebrow">Admin review</p>
+    <h1>Edit Question</h1>
+    <label>Title <input name="title" value="{{ question.title }}" required></label>
+    <label>Tags <input name="tags" value="{{ question.tags }}"></label>
+    <label>Details <textarea name="body" rows="9" required>{{ question.body }}</textarea></label>
+    <div class="button-row">
+      <button class="ghost-button" name="action" value="save" type="submit">Save</button>
+      <button class="primary-button" name="action" value="approve" type="submit">Submit</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

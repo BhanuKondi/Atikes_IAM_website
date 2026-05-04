@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Edit Answer - ATIKES Admin{% endblock %}
+{% block content %}
+<section class="form-page">
+  <form class="form-card" method="post">
+    <p class="eyebrow">Admin review</p>
+    <h1>Edit Answer</h1>
+    <p><strong>Question:</strong> {{ answer.question.title }}</p>
+    <label>Answer <textarea name="body" rows="10" required>{{ answer.body }}</textarea></label>
+    <div class="button-row">
+      <button class="ghost-button" name="action" value="save" type="submit">Save</button>
+      <button class="primary-button" name="action" value="approve" type="submit">Submit</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

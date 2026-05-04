@@ -15,7 +15,7 @@
     {% for question in questions %}
       <article class="question-card">
         <div class="answer-count">
-          <strong>{{ question.answers.count() }}</strong>
+          <strong>{{ question.approved_answer_count }}</strong>
           <span>answers</span>
         </div>
         <div>
@@ -36,12 +36,11 @@
   <aside class="panel compact">
     <h2>Useful Tags</h2>
     <div class="tag-cloud">
-      <a href="{{ url_for('qa.questions', tag='sailpoint') }}">sailpoint</a>
-      <a href="{{ url_for('qa.questions', tag='okta') }}">okta</a>
-      <a href="{{ url_for('qa.questions', tag='rbac') }}">rbac</a>
-      <a href="{{ url_for('qa.questions', tag='pam') }}">pam</a>
-      <a href="{{ url_for('qa.questions', tag='access reviews') }}">access reviews</a>
-      <a href="{{ url_for('qa.questions', tag='provisioning') }}">provisioning</a>
+      <a href="{{ url_for('qa.questions', tag='SailPoint IIQ') }}">SailPoint IIQ</a>
+      <a href="{{ url_for('qa.questions', tag='SailPoint IDN') }}">SailPoint IDN</a>
+      <a href="{{ url_for('qa.questions', tag='Okta') }}">Okta</a>
+      <a href="{{ url_for('qa.questions', tag='Saviynt') }}">Saviynt</a>
+      <a href="{{ url_for('qa.questions', tag='Ping Identity') }}">Ping Identity</a>
     </div>
   </aside>
 </section>

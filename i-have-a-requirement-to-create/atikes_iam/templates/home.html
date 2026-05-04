@@ -56,7 +56,7 @@
       {% for question in questions %}
         <a class="qa-card" href="{{ url_for('qa.question_detail', question_id=question.id) }}">
           <strong>Q: {{ question.title }}</strong>
-          <span>{{ question.answers.count() }} answers · {{ question.author.name }}</span>
+          <span>{{ question.approved_answer_count }} answers - {{ question.author.name }}</span>
         </a>
       {% else %}
         <div class="empty">

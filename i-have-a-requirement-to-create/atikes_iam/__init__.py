@@ -21,6 +21,7 @@ def create_app(config_class=Config):
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
+    from .routes.admin import admin_bp
     from .routes.auth import auth_bp
     from .routes.events import events_bp
     from .routes.experts import experts_bp
@@ -29,6 +30,7 @@ def create_app(config_class=Config):
     from .routes.trends import trends_bp
 
     app.register_blueprint(main_bp)
+    app.register_blueprint(admin_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(events_bp)
     app.register_blueprint(trends_bp)
