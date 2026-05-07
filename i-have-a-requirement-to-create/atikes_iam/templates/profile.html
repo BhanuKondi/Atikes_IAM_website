@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Profile - ATIKES{% endblock %}
+{% block content %}
+<section class="content-shell profile-shell">
+  <article class="panel profile-card">
+    <span class="avatar large">{{ current_user.name[:1] }}</span>
+    <div>
+      <p class="eyebrow">{{ "Admin" if current_user.is_admin else "User" }}</p>
+      <h1>{{ current_user.name }}</h1>
+      <p>{{ current_user.title }}</p>
+      <a class="ghost-button" href="{{ url_for('auth.logout') }}">Sign out</a>
+    </div>
+  </article>
+
+  <div class="profile-grid">
+    <article class="panel">
+      <h2>Q&amp;A Points</h2>
+      <div class="points">{{ points }}</div>
+      <p>{{ approved_answers }} approved answers and {{ approved_questions }} approved questions.</p>
+    </article>
+    <article class="panel">
+      <h2>Notifications</h2>
+      {% for item in notifications %}
+        <p class="notice-line">{{ item }}</p>
+      {% endfor %}
+    </article>
+  </div>
+</section>
+{% endblock %}

@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Admin Review - ATIKES{% endblock %}
 {% block content %}
-<section class="page-hero slim">
+<section class="page-hero slim admin-hero">
   <div>
     <p class="eyebrow">Admin mode</p>
     <h1>Review Queue</h1>
-    <p>Approve or edit trends, questions, and answers before they become visible to signed-in users.</p>
+    <p>Approve or edit trends and Q&A before they become visible to signed-in users.</p>
   </div>
-  <a class="primary-button" href="{{ url_for('trends.list_trends', refresh=1) }}">Fetch Trends</a>
+  <div class="admin-hero-actions">
+    <a class="primary-button" href="{{ url_for('trends.list_trends', refresh=1) }}">Fetch Trends</a>
+    <form class="admin-search" action="{{ url_for('admin.dashboard') }}">
+      <input name="q" value="{{ search }}" placeholder="Search Q&A queue">
+      <button class="ghost-button" type="submit">Search</button>
+    </form>
+  </div>
 </section>
 
 <section class="content-shell admin-shell">
@@ -23,10 +29,8 @@
           <small>{{ trend.source.name }} - {{ trend.category }}</small>
         </div>
         <div class="review-actions">
+          <a class="ghost-button" href="{{ url_for('admin.view_trend', trend_id=trend.id) }}">View</a>
           <a class="ghost-button" href="{{ url_for('admin.edit_trend', trend_id=trend.id) }}">Edit</a>
-          <form method="post" action="{{ url_for('admin.approve_trend', trend_id=trend.id) }}">
-            <button class="primary-button" type="submit">Post</button>
-          </form>
         </div>
       </div>
     {% else %}
@@ -36,7 +40,7 @@
 
   <article class="panel">
     <div class="panel-head">
-      <h2>Pending Questions</h2>
+      <h2>Pending Q&amp;A</h2>
       <span>{{ pending_questions|length }}</span>
     </div>
     {% for question in pending_questions %}
@@ -54,29 +58,6 @@
       </div>
     {% else %}
       <p class="empty">No pending questions.</p>
-    {% endfor %}
-  </article>
-
-  <article class="panel">
-    <div class="panel-head">
-      <h2>Pending Answers</h2>
-      <span>{{ pending_answers|length }}</span>
-    </div>
-    {% for answer in pending_answers %}
-      <div class="review-row">
-        <div>
-          <strong>{{ answer.question.title }}</strong>
-          <small>{{ answer.author.name }} - {{ answer.body[:120] }}</small>
-        </div>
-        <div class="review-actions">
-          <a class="ghost-button" href="{{ url_for('admin.edit_answer', answer_id=answer.id) }}">Edit</a>
-          <form method="post" action="{{ url_for('admin.approve_answer', answer_id=answer.id) }}">
-            <button class="primary-button" type="submit">Submit</button>
-          </form>
-        </div>
-      </div>
-    {% else %}
-      <p class="empty">No pending answers.</p>
     {% endfor %}
   </article>
 </section>

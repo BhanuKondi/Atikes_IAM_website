@@ -4,7 +4,8 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..models import Answer, Question, Trend, utcnow
+from ..models import Question, Trend, utcnow
+from ..services.content_generation import generate_trend_content
 from ..services.experts import refresh_expert_profile
 
 
@@ -25,15 +26,38 @@ def admin_required(view):
 @admin_bp.route("/")
 @admin_required
 def dashboard():
+    search = request.args.get("q", "").strip()
     pending_trends = Trend.query.filter_by(status="pending").order_by(Trend.fetched_at.desc()).limit(30).all()
-    pending_questions = Question.query.filter_by(status="pending").order_by(Question.created_at.desc()).all()
-    pending_answers = Answer.query.filter_by(status="pending").order_by(Answer.created_at.desc()).all()
+    question_query = Question.query.filter_by(status="pending")
+    if search:
+        question_query = question_query.filter(Question.title.ilike(f"%{search}%"))
+    pending_questions = question_query.order_by(Question.created_at.desc()).all()
     return render_template(
         "admin/dashboard.html",
         pending_trends=pending_trends,
         pending_questions=pending_questions,
-        pending_answers=pending_answers,
+        search=search,
     )
+
+
+@admin_bp.route("/trends/<int:trend_id>")
+@admin_required
+def view_trend(trend_id):
+    trend = Trend.query.get_or_404(trend_id)
+    return render_template("admin/view_trend.html", trend=trend)
+
+
+@admin_bp.post("/trends/<int:trend_id>/generate")
+@admin_required
+def generate_trend(trend_id):
+    trend = Trend.query.get_or_404(trend_id)
+    try:
+        trend.generated_content = generate_trend_content(trend)
+        db.session.commit()
+        flash("Website content generated for review.", "success")
+    except Exception as exc:
+        flash(f"Could not generate content from the source site: {exc}", "error")
+    return redirect(url_for("admin.view_trend", trend_id=trend.id))
 
 
 @admin_bp.route("/trends/<int:trend_id>/edit", methods=["GET", "POST"])
@@ -43,6 +67,7 @@ def edit_trend(trend_id):
     if request.method == "POST":
         trend.title = request.form.get("title", "").strip() or trend.title
         trend.summary = request.form.get("summary", "").strip()
+        trend.generated_content = request.form.get("generated_content", "").strip()
         trend.category = request.form.get("category", "").strip() or trend.category
         trend.url = request.form.get("url", "").strip() or trend.url
         if request.form.get("action") == "approve":
@@ -63,6 +88,7 @@ def edit_question(question_id):
         question.title = request.form.get("title", "").strip() or question.title
         question.body = request.form.get("body", "").strip() or question.body
         question.tags = request.form.get("tags", "").strip()
+        question.version = request.form.get("version", "").strip()
         if request.form.get("action") == "approve":
             approve_question_record(question)
             flash("Question approved and published.", "success")
@@ -71,22 +97,6 @@ def edit_question(question_id):
         flash("Question saved for review.", "success")
         return redirect(url_for("admin.dashboard"))
     return render_template("admin/edit_question.html", question=question)
-
-
-@admin_bp.route("/answers/<int:answer_id>/edit", methods=["GET", "POST"])
-@admin_required
-def edit_answer(answer_id):
-    answer = Answer.query.get_or_404(answer_id)
-    if request.method == "POST":
-        answer.body = request.form.get("body", "").strip() or answer.body
-        if request.form.get("action") == "approve":
-            approve_answer_record(answer)
-            flash("Answer approved and published.", "success")
-            return redirect(url_for("admin.dashboard"))
-        db.session.commit()
-        flash("Answer saved for review.", "success")
-        return redirect(url_for("admin.dashboard"))
-    return render_template("admin/edit_answer.html", answer=answer)
 
 
 @admin_bp.post("/trends/<int:trend_id>/approve")
@@ -105,15 +115,9 @@ def approve_question(question_id):
     return redirect(url_for("admin.dashboard"))
 
 
-@admin_bp.post("/answers/<int:answer_id>/approve")
-@admin_required
-def approve_answer(answer_id):
-    approve_answer_record(Answer.query.get_or_404(answer_id))
-    flash("Answer approved and published.", "success")
-    return redirect(url_for("admin.dashboard"))
-
-
 def approve_trend_record(trend):
+    if trend.generated_content:
+        trend.summary = trend.generated_content
     trend.status = "approved"
     trend.approved_at = utcnow()
     trend.approved_by = current_user
@@ -125,12 +129,4 @@ def approve_question_record(question):
     question.approved_at = utcnow()
     question.approved_by = current_user
     refresh_expert_profile(question.author)
-    db.session.commit()
-
-
-def approve_answer_record(answer):
-    answer.status = "approved"
-    answer.approved_at = utcnow()
-    answer.approved_by = current_user
-    refresh_expert_profile(answer.author)
     db.session.commit()

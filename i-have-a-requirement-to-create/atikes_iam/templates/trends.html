@@ -33,7 +33,7 @@
           <span>{{ trend.category }}</span>
           <time>{{ trend.published_at.strftime("%d %b %Y") }}</time>
         </div>
-        <h2><a href="{{ trend.url }}" target="_blank" rel="noopener">{{ trend.title }}</a></h2>
+        <h2><a href="{{ url_for('trends.trend_detail', trend_id=trend.id) }}">{{ trend.title }}</a></h2>
         <p>{{ trend.summary or "Open the source article for the full update." }}</p>
         <div class="trend-source">
           <span>{{ trend.source.name }}</span>

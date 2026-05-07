@@ -1,5 +1,8 @@
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from pathlib import Path
+
+from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
+from werkzeug.utils import secure_filename
 
 from ..extensions import db
 from ..models import Answer, Question
@@ -7,6 +10,7 @@ from ..services.experts import refresh_expert_profile
 
 
 qa_bp = Blueprint("qa", __name__, url_prefix="/qa")
+ALLOWED_ATTACHMENTS = {"pdf", "jpg", "jpeg", "png"}
 
 
 @qa_bp.route("/")
@@ -27,6 +31,7 @@ def ask_question():
     if request.method == "POST":
         title = request.form.get("title", "").strip()
         body = request.form.get("body", "").strip()
+        version = request.form.get("version", "").strip()
         tag_choice = request.form.get("tag_choice", "").strip()
         other_tag = request.form.get("other_tag", "").strip()
         tags = other_tag if tag_choice == "Other" else tag_choice
@@ -35,14 +40,32 @@ def ask_question():
         elif not tags:
             flash("Please choose a tag or enter another IAM tag.", "error")
         else:
-            question = Question(title=title, body=body, tags=tags, author=current_user)
+            question = Question(title=title, body=body, tags=tags, version=version, author=current_user)
             db.session.add(question)
             db.session.flush()
+            _save_attachment(question)
             refresh_expert_profile(current_user)
             db.session.commit()
             flash("Question submitted for admin review.", "success")
             return redirect(url_for("qa.question_detail", question_id=question.id))
     return render_template("qa/ask.html", tag_options=tag_options)
+
+
+def _save_attachment(question):
+    upload = request.files.get("attachment")
+    if not upload or not upload.filename:
+        return
+    filename = secure_filename(upload.filename)
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if extension not in ALLOWED_ATTACHMENTS:
+        flash("Attachment skipped. Please upload only PDF, JPG, JPEG, or PNG files.", "error")
+        return
+    upload_dir = Path(current_app.root_path) / "static" / "uploads" / "questions"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    stored_name = f"question-{question.id}-{filename}"
+    upload.save(upload_dir / stored_name)
+    question.attachment_filename = filename
+    question.attachment_path = f"uploads/questions/{stored_name}"
 
 
 @qa_bp.route("/<int:question_id>", methods=["GET", "POST"])

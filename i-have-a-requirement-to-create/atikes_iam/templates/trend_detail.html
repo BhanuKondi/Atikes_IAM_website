@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ trend.title }} - ATIKES Trends{% endblock %}
+{% block content %}
+<section class="content-shell detail-shell">
+  <article class="question-detail">
+    <div class="trend-meta">
+      <span>{{ trend.category }}</span>
+      <time>{{ trend.published_at.strftime("%d %b %Y") }}</time>
+    </div>
+    <h1>{{ trend.title }}</h1>
+    <p>{{ trend.summary or trend.generated_content or "This trend is under review." }}</p>
+    <small>{{ trend.source.name }} - {{ trend.source_domain }}</small>
+  </article>
+</section>
+{% endblock %}

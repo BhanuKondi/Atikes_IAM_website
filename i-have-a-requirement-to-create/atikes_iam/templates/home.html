@@ -1,15 +1,41 @@
 {% extends "base.html" %}
 {% block title %}ATIKES IAM Community{% endblock %}
 {% block content %}
-<section class="hero">
+<section class="hero home-hero">
   <div class="hero-grid"></div>
   <div class="hero-content">
     <h1>Learn. <span>Share.</span> Grow.</h1>
-    <p>Stay current with IAM trends, ask identity questions, and connect with practitioners building secure access programs.</p>
-    <form class="searchbar" action="{{ url_for('trends.list_trends') }}">
-      <input name="q" placeholder="Search IAM trends, questions, experts..." aria-label="Search">
-      <button type="submit">Search</button>
-    </form>
+    <p>Stay current with approved IAM trends, Q&amp;A, experts, and events in one place.</p>
+    <div class="home-slider" aria-label="ATIKES highlights">
+      {% if trends %}
+        <a class="slide-card active" href="{{ url_for('trends.trend_detail', trend_id=trends[0].id) }}">
+          <span>Top Trend</span>
+          <strong>{{ trends[0].title }}</strong>
+          <small>{{ trends[0].category }}</small>
+        </a>
+      {% endif %}
+      {% if questions %}
+        <a class="slide-card" href="{{ url_for('qa.questions') }}">
+          <span>Top Q&amp;A</span>
+          <strong>{{ questions[0].title }}</strong>
+          <small>{{ questions[0].approved_answer_count }} answers</small>
+        </a>
+      {% endif %}
+      {% if experts %}
+        <a class="slide-card" href="{{ url_for('experts.directory') }}">
+          <span>Top Expert</span>
+          <strong>{{ experts[0].display_name }}</strong>
+          <small>{{ experts[0].answer_total }} answers</small>
+        </a>
+      {% endif %}
+      {% if events %}
+        <a class="slide-card" href="{{ url_for('events.list_events') }}">
+          <span>Upcoming Event</span>
+          <strong>{{ events[0].title }}</strong>
+          <small>{{ events[0].starts_at.strftime("%d %b %Y") }}</small>
+        </a>
+      {% endif %}
+    </div>
     <div class="stat-row">
       <div><strong>{{ stats.trends }}+</strong><span>Live Trends</span></div>
       <div><strong>{{ stats.answers }}+</strong><span>Answers Posted</span></div>
@@ -33,7 +59,7 @@
     </div>
     <div class="trend-list">
       {% for trend in trends %}
-        <a class="trend-item" href="{{ trend.url }}" target="_blank" rel="noopener">
+        <a class="trend-item" href="{{ url_for('trends.trend_detail', trend_id=trend.id) }}">
           <div class="trend-thumb">{{ trend.category[:2] }}</div>
           <div>
             <h3>{{ trend.title }}</h3>
@@ -65,7 +91,7 @@
         </div>
       {% endfor %}
     </div>
-    <a class="primary-button full" href="{{ url_for('qa.ask_question') }}">Go to Q&amp;A Page</a>
+    <a class="primary-button full" href="{{ url_for('qa.questions') }}">Go to Q&amp;A Page</a>
   </article>
 
   <aside class="side-stack">

@@ -33,3 +33,10 @@ def list_trends():
         active_category=category,
         search=search,
     )
+
+
+@trends_bp.route("/<int:trend_id>")
+@login_required
+def trend_detail(trend_id):
+    trend = Trend.query.filter_by(id=trend_id, status="approved").first_or_404()
+    return render_template("trend_detail.html", trend=trend)

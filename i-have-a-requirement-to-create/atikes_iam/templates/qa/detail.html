@@ -13,6 +13,12 @@
       <span class="status-pill">{{ question.status }}</span>
     {% endif %}
     <p>{{ question.body }}</p>
+    {% if question.version %}
+      <small>Version: {{ question.version }}</small>
+    {% endif %}
+    {% if question.attachment_path %}
+      <a class="attachment-link" href="{{ url_for('static', filename=question.attachment_path) }}" target="_blank" rel="noopener">{{ question.attachment_filename }}</a>
+    {% endif %}
     <small>Asked by {{ question.author.name }} on {{ question.created_at.strftime("%d %b %Y") }}</small>
   </article>
 

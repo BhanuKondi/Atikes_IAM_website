@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template
+from flask_login import current_user, login_required
 
 from ..models import Answer, ExpertProfile, Question, Trend, UpcomingEvent
 from ..services.trends import fetch_live_trends
@@ -11,10 +12,12 @@ main_bp = Blueprint("main", __name__)
 def home():
     trends, trend_errors, refreshed = fetch_live_trends()
     questions = Question.query.filter_by(status="approved").order_by(Question.created_at.desc()).limit(5).all()
-    experts = ExpertProfile.query.filter_by(is_listed=True).order_by(
-        ExpertProfile.answer_total.desc(),
-        ExpertProfile.updated_at.desc(),
-    ).limit(5).all()
+    experts = (
+        ExpertProfile.query.filter_by(is_listed=True)
+        .order_by(ExpertProfile.answer_total.desc(), ExpertProfile.updated_at.desc())
+        .limit(5)
+        .all()
+    )
     events = (
         UpcomingEvent.query.filter_by(is_published=True)
         .order_by(UpcomingEvent.starts_at.asc())
@@ -36,4 +39,28 @@ def home():
         experts=experts,
         events=events,
         stats=stats,
+    )
+
+
+@main_bp.route("/profile")
+@login_required
+def profile():
+    approved_questions = Question.query.filter_by(author_id=current_user.id, status="approved").count()
+    pending_questions = Question.query.filter_by(author_id=current_user.id, status="pending").count()
+    approved_answers = Answer.query.filter_by(author_id=current_user.id, status="approved").count()
+    pending_answers = Answer.query.filter_by(author_id=current_user.id, status="pending").count()
+    points = approved_answers * 10 + approved_questions * 2
+    notifications = []
+    if pending_questions:
+        notifications.append(f"{pending_questions} question(s) waiting for admin review.")
+    if pending_answers:
+        notifications.append(f"{pending_answers} answer(s) waiting for admin review.")
+    if not notifications:
+        notifications.append("No pending notifications.")
+    return render_template(
+        "profile.html",
+        points=points,
+        approved_questions=approved_questions,
+        approved_answers=approved_answers,
+        notifications=notifications,
     )

@@ -22,6 +22,9 @@
       <a class="{{ 'active' if request.blueprint == 'qa' }}" href="{{ url_for('qa.questions') }}">Q&amp;A</a>
       <a class="{{ 'active' if request.blueprint == 'experts' }}" href="{{ url_for('experts.directory') }}">Experts</a>
       <a class="{{ 'active' if request.blueprint == 'events' }}" href="{{ url_for('events.list_events') }}">Events</a>
+      <form class="nav-search" action="{{ url_for('trends.list_trends') }}">
+        <input name="q" placeholder="Search">
+      </form>
       {% if current_user.is_authenticated and current_user.is_admin %}
         <a class="{{ 'active' if request.blueprint == 'admin' }}" href="{{ url_for('admin.dashboard') }}">Admin</a>
       {% endif %}
@@ -32,7 +35,7 @@
         <div>
           <strong>{{ current_user.name }}</strong>
           <small>{{ "Admin" if current_user.is_admin else "User" }}</small>
-          <a href="{{ url_for('auth.logout') }}">Sign out</a>
+          <a href="{{ url_for('main.profile') }}">View Profile</a>
         </div>
       {% else %}
         <a class="ghost-button" href="{{ url_for('auth.login') }}">Sign in</a>

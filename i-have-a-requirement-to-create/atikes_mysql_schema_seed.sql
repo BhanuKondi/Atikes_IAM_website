@@ -55,6 +55,7 @@ CREATE TABLE `trend` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(300) NOT NULL,
   `summary` TEXT,
+  `generated_content` TEXT,
   `url` VARCHAR(700) NOT NULL,
   `source_domain` VARCHAR(180) DEFAULT '',
   `category` VARCHAR(120) NOT NULL,
@@ -87,6 +88,9 @@ CREATE TABLE `question` (
   `title` VARCHAR(220) NOT NULL,
   `body` TEXT NOT NULL,
   `tags` VARCHAR(255) DEFAULT '',
+  `version` VARCHAR(80) DEFAULT '',
+  `attachment_filename` VARCHAR(255) DEFAULT '',
+  `attachment_path` VARCHAR(500) DEFAULT '',
   `status` VARCHAR(30) DEFAULT 'pending',
   `approved_at` DATETIME NULL,
   `approved_by_id` INT NULL,
@@ -192,12 +196,12 @@ VALUES
   (5, 'Rahul Mehta', 'rahul.mehta@example.com', 'scrypt:32768:8:1$2U0A4dtGiKEycLoC$1ce887eca30c1a0a18919547fe73639641c74c4f759ffe70f7ec0514f556e8f47b51539d65f00c3728eaf28052980341e44c0c921b98c0ba4e42a26267a136ef', 'IAM Engineer', 'ATIKES Community', 'Works on provisioning, RBAC, and joiner-mover-leaver workflows.', 'user', NOW());
 
 INSERT INTO `question`
-  (`id`, `title`, `body`, `tags`, `status`, `approved_at`, `approved_by_id`, `created_at`, `author_id`)
+  (`id`, `title`, `body`, `tags`, `version`, `attachment_filename`, `attachment_path`, `status`, `approved_at`, `approved_by_id`, `created_at`, `author_id`)
 VALUES
-  (1, 'How should we design mover access reviews in SailPoint?', 'Our organization has frequent department changes and manager changes. What is a good approach to automate mover access reviews while avoiding unnecessary access removal?', 'SailPoint IIQ', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 5 DAY), 5),
-  (2, 'What is the best way to roll out MFA for legacy applications?', 'We have a mix of modern SaaS applications and older internal applications. How should we plan MFA rollout without breaking business workflows?', 'Okta', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 4 DAY), 2),
-  (3, 'How do we start RBAC when access is already messy?', 'The current access model is mostly request-based and there are many one-off entitlements. What practical steps help build RBAC without a huge first-phase project?', 'Saviynt', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 3 DAY), 3),
-  (4, 'How often should privileged access be certified?', 'For admin access across servers, cloud consoles, and databases, what review frequency is reasonable and audit friendly?', 'Ping Identity', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 2 DAY), 5);
+  (1, 'How should we design mover access reviews in SailPoint?', 'Our organization has frequent department changes and manager changes. What is a good approach to automate mover access reviews while avoiding unnecessary access removal?', 'SailPoint IIQ', 'IIQ 8.4', '', '', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 5 DAY), 5),
+  (2, 'What is the best way to roll out MFA for legacy applications?', 'We have a mix of modern SaaS applications and older internal applications. How should we plan MFA rollout without breaking business workflows?', 'Okta', 'Okta OIE', '', '', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 4 DAY), 2),
+  (3, 'How do we start RBAC when access is already messy?', 'The current access model is mostly request-based and there are many one-off entitlements. What practical steps help build RBAC without a huge first-phase project?', 'Saviynt', '2026', '', '', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 3 DAY), 3),
+  (4, 'How often should privileged access be certified?', 'For admin access across servers, cloud consoles, and databases, what review frequency is reasonable and audit friendly?', 'Ping Identity', 'PingOne', '', '', 'approved', NOW(), 1, DATE_SUB(NOW(), INTERVAL 2 DAY), 5);
 
 INSERT INTO `answer`
   (`id`, `body`, `status`, `approved_at`, `approved_by_id`, `created_at`, `author_id`, `question_id`)

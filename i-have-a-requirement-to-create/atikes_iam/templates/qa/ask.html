@@ -2,7 +2,7 @@
 {% block title %}Ask IAM Question · ATIKES{% endblock %}
 {% block content %}
 <section class="form-page">
-  <form class="form-card" method="post">
+  <form class="form-card" method="post" enctype="multipart/form-data">
     <p class="eyebrow">IAM Q&amp;A</p>
     <h1>Ask a Question</h1>
     <label>Question title
@@ -10,6 +10,9 @@
     </label>
     <label>Details
       <textarea name="body" required minlength="20" rows="8" placeholder="Share the tool, business context, current issue, and what you already tried."></textarea>
+    </label>
+    <label>Version
+      <input name="version" placeholder="Example: IIQ 8.4, IdentityNow, Okta OIE">
     </label>
     <label>Tags
       <select name="tag_choice" data-tag-select required>
@@ -22,6 +25,9 @@
     </label>
     <label class="hidden" data-other-tag-wrap>Other tag
       <input name="other_tag" data-other-tag placeholder="Enter another IAM tag">
+    </label>
+    <label>Attachment
+      <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png">
     </label>
     <button class="primary-button" type="submit">Submit for Review</button>
   </form>
