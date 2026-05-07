@@ -7,6 +7,9 @@
     <h1>Upcoming Events</h1>
     <p>Webinars, conferences, and IAM sessions are stored in a dedicated events table for publishing and future admin workflows.</p>
   </div>
+  {% if current_user.is_authenticated and current_user.is_admin %}
+    <a class="primary-button" href="{{ url_for('events.new_event') }}">Add Event</a>
+  {% endif %}
 </section>
 
 <section class="content-shell">
@@ -24,6 +27,14 @@
           <small>{{ event.organizer }} · {{ event.location }}</small>
           {% if event.registration_url %}
             <a class="primary-button" href="{{ event.registration_url }}" target="_blank" rel="noopener">Register</a>
+          {% endif %}
+          {% if current_user.is_authenticated and current_user.is_admin %}
+            <div class="button-row event-admin-actions">
+              <a class="ghost-button" href="{{ url_for('events.edit_event', event_id=event.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('events.delete_event', event_id=event.id) }}">
+                <button class="ghost-button danger" type="submit">Remove</button>
+              </form>
+            </div>
           {% endif %}
         </div>
       </article>

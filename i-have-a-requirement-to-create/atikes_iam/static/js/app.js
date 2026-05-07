@@ -23,3 +23,31 @@ if (tagSelect && otherTagWrap && otherTag) {
   tagSelect.addEventListener("change", syncOtherTag);
   syncOtherTag();
 }
+
+const carousel = document.querySelector("[data-carousel]");
+if (carousel) {
+  const slides = [...carousel.querySelectorAll("[data-slide]")];
+  const previous = carousel.querySelector("[data-slide-prev]");
+  const next = carousel.querySelector("[data-slide-next]");
+  let activeIndex = 0;
+
+  const showSlide = (index) => {
+    if (!slides.length) return;
+    activeIndex = (index + slides.length) % slides.length;
+    slides.forEach((slide, slideIndex) => {
+      slide.classList.toggle("active", slideIndex === activeIndex);
+    });
+  };
+
+  previous?.addEventListener("click", (event) => {
+    event.preventDefault();
+    showSlide(activeIndex - 1);
+  });
+
+  next?.addEventListener("click", (event) => {
+    event.preventDefault();
+    showSlide(activeIndex + 1);
+  });
+
+  window.setInterval(() => showSlide(activeIndex + 1), 7000);
+}

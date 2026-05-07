@@ -4,37 +4,49 @@
 <section class="hero home-hero">
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <h1>Learn. <span>Share.</span> Grow.</h1>
-    <p>Stay current with approved IAM trends, Q&amp;A, experts, and events in one place.</p>
-    <div class="home-slider" aria-label="ATIKES highlights">
+    <div class="home-slider" aria-label="ATIKES highlights" data-carousel>
       {% if trends %}
-        <a class="slide-card active" href="{{ url_for('trends.trend_detail', trend_id=trends[0].id) }}">
-          <span>Top Trend</span>
-          <strong>{{ trends[0].title }}</strong>
+        <a class="feature-slide active" href="{{ url_for('trends.trend_detail', trend_id=trends[0].id) }}" data-slide>
+          <span class="slide-count">01</span>
+          <span class="slide-total">04</span>
+          <strong>Top Trend</strong>
+          <h1>{{ trends[0].title }}</h1>
+          <p>{{ (trends[0].summary or "Explore the latest approved IAM trend.")[:260] }}</p>
           <small>{{ trends[0].category }}</small>
         </a>
       {% endif %}
       {% if questions %}
-        <a class="slide-card" href="{{ url_for('qa.questions') }}">
-          <span>Top Q&amp;A</span>
-          <strong>{{ questions[0].title }}</strong>
+        <a class="feature-slide" href="{{ url_for('qa.questions') }}" data-slide>
+          <span class="slide-count">02</span>
+          <span class="slide-total">04</span>
+          <strong>Top Q&amp;A</strong>
+          <h1>{{ questions[0].title }}</h1>
+          <p>{{ questions[0].body[:260] }}</p>
           <small>{{ questions[0].approved_answer_count }} answers</small>
         </a>
       {% endif %}
       {% if experts %}
-        <a class="slide-card" href="{{ url_for('experts.directory') }}">
-          <span>Top Expert</span>
-          <strong>{{ experts[0].display_name }}</strong>
+        <a class="feature-slide" href="{{ url_for('experts.directory') }}" data-slide>
+          <span class="slide-count">03</span>
+          <span class="slide-total">04</span>
+          <strong>Top Expert</strong>
+          <h1>{{ experts[0].display_name }}</h1>
+          <p>{{ experts[0].title }}{% if experts[0].bio %}. {{ experts[0].bio[:180] }}{% endif %}</p>
           <small>{{ experts[0].answer_total }} answers</small>
         </a>
       {% endif %}
       {% if events %}
-        <a class="slide-card" href="{{ url_for('events.list_events') }}">
-          <span>Upcoming Event</span>
-          <strong>{{ events[0].title }}</strong>
+        <a class="feature-slide" href="{{ url_for('events.list_events') }}" data-slide>
+          <span class="slide-count">04</span>
+          <span class="slide-total">04</span>
+          <strong>Upcoming Event</strong>
+          <h1>{{ events[0].title }}</h1>
+          <p>{{ events[0].description or "Join the next IAM event and keep your team aligned with current identity practices." }}</p>
           <small>{{ events[0].starts_at.strftime("%d %b %Y") }}</small>
         </a>
       {% endif %}
+      <button class="slide-arrow prev" type="button" data-slide-prev aria-label="Previous slide">←</button>
+      <button class="slide-arrow next" type="button" data-slide-next aria-label="Next slide">→</button>
     </div>
     <div class="stat-row">
       <div><strong>{{ stats.trends }}+</strong><span>Live Trends</span></div>
