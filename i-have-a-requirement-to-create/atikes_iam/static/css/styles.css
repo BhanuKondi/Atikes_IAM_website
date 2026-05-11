@@ -51,8 +51,9 @@ a {
 
 .brand-logo {
   display: block;
-  width: 150px;
-  height: auto;
+  width: 170px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .brand-mark {
@@ -233,7 +234,7 @@ a {
 
 .home-hero {
   width: min(820px, calc(100% - 72px));
-  min-height: 340px;
+  min-height: 390px;
   margin: 24px auto 0;
   border-radius: 8px;
 }
@@ -258,7 +259,7 @@ a {
 
 .home-slider {
   position: relative;
-  min-height: 250px;
+  min-height: 310px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -266,11 +267,12 @@ a {
 .feature-slide {
   position: absolute;
   inset: 0;
-  display: grid;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   justify-items: start;
-  gap: 12px;
-  padding: 28px 58px 42px;
+  gap: 10px;
+  padding: 34px 58px 58px;
   color: #fff;
   text-align: left;
   opacity: 0;
@@ -300,12 +302,12 @@ a {
 
 .feature-slide h1 {
   display: -webkit-box;
-  max-width: 500px;
+  max-width: 480px;
   overflow: hidden;
-  font-size: clamp(24px, 3.2vw, 38px);
-  line-height: 1.12;
+  font-size: clamp(22px, 2.7vw, 34px);
+  line-height: 1.16;
   text-transform: uppercase;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
 }
 
@@ -1014,25 +1016,25 @@ a {
 }
 
 .home-slider {
-  min-height: 280px;
+  min-height: 310px;
 }
 
 .feature-slide {
-  padding: 34px 64px 48px;
+  padding: 34px 58px 58px;
 }
 
 .feature-slide h1 {
-  max-width: 560px;
-  font-size: clamp(28px, 4vw, 46px);
+  max-width: 480px;
+  font-size: clamp(22px, 2.7vw, 34px);
 }
 
 .feature-slide p {
-  max-width: 500px;
-  font-size: 16px;
+  max-width: 460px;
+  font-size: 14px;
 }
 
 .feature-slide::after {
-  width: 30%;
+  width: 24%;
 }
 
 .trend-card-image,
