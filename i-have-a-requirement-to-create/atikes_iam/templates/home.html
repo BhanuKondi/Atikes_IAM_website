@@ -7,8 +7,6 @@
     <div class="home-slider" aria-label="ATIKES highlights" data-carousel>
       {% if trends %}
         <a class="feature-slide active" href="{{ url_for('trends.trend_detail', trend_id=trends[0].id) }}" data-slide>
-          <span class="slide-count">01</span>
-          <span class="slide-total">04</span>
           <strong>Top Trend</strong>
           <h1>{{ trends[0].title }}</h1>
           <p>{{ (trends[0].summary or "Explore the latest approved IAM trend.")[:260] }}</p>
@@ -17,8 +15,6 @@
       {% endif %}
       {% if questions %}
         <a class="feature-slide" href="{{ url_for('qa.questions') }}" data-slide>
-          <span class="slide-count">02</span>
-          <span class="slide-total">04</span>
           <strong>Top Q&amp;A</strong>
           <h1>{{ questions[0].title }}</h1>
           <p>{{ questions[0].body[:260] }}</p>
@@ -27,8 +23,6 @@
       {% endif %}
       {% if experts %}
         <a class="feature-slide" href="{{ url_for('experts.directory') }}" data-slide>
-          <span class="slide-count">03</span>
-          <span class="slide-total">04</span>
           <strong>Top Expert</strong>
           <h1>{{ experts[0].display_name }}</h1>
           <p>{{ experts[0].title }}{% if experts[0].bio %}. {{ experts[0].bio[:180] }}{% endif %}</p>
@@ -37,8 +31,6 @@
       {% endif %}
       {% if events %}
         <a class="feature-slide" href="{{ url_for('events.list_events') }}" data-slide>
-          <span class="slide-count">04</span>
-          <span class="slide-total">04</span>
           <strong>Upcoming Event</strong>
           <h1>{{ events[0].title }}</h1>
           <p>{{ events[0].description or "Join the next IAM event and keep your team aligned with current identity practices." }}</p>
