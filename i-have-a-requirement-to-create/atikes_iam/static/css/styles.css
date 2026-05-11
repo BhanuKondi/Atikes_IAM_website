@@ -233,15 +233,15 @@ a {
 }
 
 .home-hero {
-  width: min(820px, calc(100% - 72px));
-  min-height: 390px;
-  margin: 24px auto 0;
-  border-radius: 8px;
+  width: 100%;
+  min-height: 430px;
+  margin: 0;
+  border-radius: 0;
 }
 
 .hero-content {
   position: relative;
-  width: min(980px, calc(100% - 32px));
+  width: min(980px, calc(100% - 56px));
   padding: 34px 0;
 }
 
@@ -259,7 +259,7 @@ a {
 
 .home-slider {
   position: relative;
-  min-height: 310px;
+  min-height: 330px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -272,7 +272,7 @@ a {
   justify-content: center;
   justify-items: start;
   gap: 10px;
-  padding: 34px 58px 58px;
+  padding: 34px 70px 58px;
   color: #fff;
   text-align: left;
   opacity: 0;
@@ -292,7 +292,7 @@ a {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 24%;
+  width: 28%;
   content: "";
   background:
     radial-gradient(circle at 80% 40%, rgba(249, 115, 22, 0.48), transparent 38%),
@@ -444,7 +444,7 @@ a {
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr) minmax(240px, 0.7fr);
   gap: 18px;
   max-width: 1260px;
-  margin: 28px auto;
+  margin: 34px auto;
   padding: 0 28px;
 }
 
@@ -1011,16 +1011,16 @@ a {
 }
 
 .home-hero {
-  width: min(900px, calc(100% - 56px));
-  min-height: 380px;
+  width: 100%;
+  min-height: 430px;
 }
 
 .home-slider {
-  min-height: 310px;
+  min-height: 330px;
 }
 
 .feature-slide {
-  padding: 34px 58px 58px;
+  padding: 34px 70px 58px;
 }
 
 .feature-slide h1 {
@@ -1034,7 +1034,7 @@ a {
 }
 
 .feature-slide::after {
-  width: 24%;
+  width: 28%;
 }
 
 .trend-card-image,
@@ -1196,7 +1196,7 @@ a {
   }
 
   .home-hero {
-    width: min(100% - 28px, 820px);
+    width: 100%;
     min-height: 400px;
   }
 
