@@ -24,6 +24,19 @@ if (tagSelect && otherTagWrap && otherTag) {
   syncOtherTag();
 }
 
+const profileToggle = document.querySelector("[data-profile-toggle]");
+const profileMenu = document.querySelector("[data-profile-menu]");
+if (profileToggle && profileMenu) {
+  profileToggle.addEventListener("click", () => {
+    profileMenu.classList.toggle("open");
+  });
+  document.addEventListener("click", (event) => {
+    if (!profileToggle.contains(event.target) && !profileMenu.contains(event.target)) {
+      profileMenu.classList.remove("open");
+    }
+  });
+}
+
 const carousel = document.querySelector("[data-carousel]");
 if (carousel) {
   const slides = [...carousel.querySelectorAll("[data-slide]")];
@@ -51,3 +64,18 @@ if (carousel) {
 
   window.setInterval(() => showSlide(activeIndex + 1), 7000);
 }
+
+document.querySelectorAll("[data-format]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const editor = document.querySelector("[data-rich-editor]");
+    if (!editor) return;
+    const tag = button.dataset.format === "bold" ? "**" : "_";
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selected = editor.value.slice(start, end) || "text";
+    editor.value = `${editor.value.slice(0, start)}${tag}${selected}${tag}${editor.value.slice(end)}`;
+    editor.focus();
+    editor.selectionStart = start + tag.length;
+    editor.selectionEnd = start + tag.length + selected.length;
+  });
+});

@@ -5,23 +5,27 @@ from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
 from ..extensions import db
-from ..models import Answer, Question
+from ..models import Answer, Question, QuestionAttachment
 from ..services.experts import refresh_expert_profile
 
 
 qa_bp = Blueprint("qa", __name__, url_prefix="/qa")
-ALLOWED_ATTACHMENTS = {"pdf", "jpg", "jpeg", "png"}
+ALLOWED_ATTACHMENTS = {"pdf", "jpg", "jpeg", "png", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "zip"}
 
 
 @qa_bp.route("/")
 @login_required
 def questions():
     tag = request.args.get("tag", "").strip().lower()
+    search = request.args.get("q", "").strip()
     query = Question.query.filter_by(status="approved")
     if tag:
         query = query.filter(Question.tags.ilike(f"%{tag}%"))
+    if search:
+        pattern = f"%{search}%"
+        query = query.filter(Question.title.ilike(pattern) | Question.body.ilike(pattern) | Question.tags.ilike(pattern))
     items = query.order_by(Question.created_at.desc()).all()
-    return render_template("qa/list.html", questions=items, active_tag=tag)
+    return render_template("qa/list.html", questions=items, active_tag=tag, search=search)
 
 
 @qa_bp.route("/ask", methods=["GET", "POST"])
@@ -52,20 +56,27 @@ def ask_question():
 
 
 def _save_attachment(question):
-    upload = request.files.get("attachment")
-    if not upload or not upload.filename:
-        return
-    filename = secure_filename(upload.filename)
-    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
-    if extension not in ALLOWED_ATTACHMENTS:
-        flash("Attachment skipped. Please upload only PDF, JPG, JPEG, or PNG files.", "error")
-        return
     upload_dir = Path(current_app.root_path) / "static" / "uploads" / "questions"
     upload_dir.mkdir(parents=True, exist_ok=True)
-    stored_name = f"question-{question.id}-{filename}"
-    upload.save(upload_dir / stored_name)
-    question.attachment_filename = filename
-    question.attachment_path = f"uploads/questions/{stored_name}"
+    for upload in request.files.getlist("attachments"):
+        if not upload or not upload.filename:
+            continue
+        filename = secure_filename(upload.filename)
+        extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+        if extension not in ALLOWED_ATTACHMENTS:
+            flash(f"{filename} skipped. This file type is not allowed.", "error")
+            continue
+        stored_name = f"question-{question.id}-{len(question.attachments.all()) + 1}-{filename}"
+        upload.save(upload_dir / stored_name)
+        attachment = QuestionAttachment(
+            question=question,
+            filename=filename,
+            file_path=f"uploads/questions/{stored_name}",
+        )
+        db.session.add(attachment)
+        if not question.attachment_path:
+            question.attachment_filename = filename
+            question.attachment_path = attachment.file_path
 
 
 @qa_bp.route("/<int:question_id>", methods=["GET", "POST"])

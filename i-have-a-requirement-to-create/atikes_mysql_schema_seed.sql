@@ -10,6 +10,7 @@ USE atikes_iam;
 
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `answer`;
+DROP TABLE IF EXISTS `question_attachment`;
 DROP TABLE IF EXISTS `question`;
 DROP TABLE IF EXISTS `expert_profile`;
 DROP TABLE IF EXISTS `trend`;
@@ -56,6 +57,8 @@ CREATE TABLE `trend` (
   `title` VARCHAR(300) NOT NULL,
   `summary` TEXT,
   `generated_content` TEXT,
+  `image_url` VARCHAR(700) DEFAULT '',
+  `image_path` VARCHAR(500) DEFAULT '',
   `url` VARCHAR(700) NOT NULL,
   `source_domain` VARCHAR(180) DEFAULT '',
   `category` VARCHAR(120) NOT NULL,
@@ -131,6 +134,19 @@ CREATE TABLE `answer` (
     FOREIGN KEY (`author_id`) REFERENCES `user` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_answer_question`
+    FOREIGN KEY (`question_id`) REFERENCES `question` (`id`)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `question_attachment` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `question_id` INT NOT NULL,
+  `filename` VARCHAR(255) NOT NULL,
+  `file_path` VARCHAR(500) NOT NULL,
+  `uploaded_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ix_question_attachment_question_id` (`question_id`),
+  CONSTRAINT `fk_question_attachment_question`
     FOREIGN KEY (`question_id`) REFERENCES `question` (`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

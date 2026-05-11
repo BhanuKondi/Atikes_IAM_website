@@ -74,6 +74,8 @@ class Trend(db.Model):
     title = db.Column(db.String(300), nullable=False)
     summary = db.Column(db.Text, default="")
     generated_content = db.Column(db.Text, default="")
+    image_url = db.Column(db.String(700), default="")
+    image_path = db.Column(db.String(500), default="")
     url = db.Column(db.String(700), nullable=False, unique=True, index=True)
     source_domain = db.Column(db.String(180), default="")
     category = db.Column(db.String(120), nullable=False, index=True)
@@ -111,6 +113,12 @@ class Question(db.Model):
         cascade="all, delete-orphan",
         lazy="dynamic",
     )
+    attachments = db.relationship(
+        "QuestionAttachment",
+        back_populates="question",
+        cascade="all, delete-orphan",
+        lazy="dynamic",
+    )
 
     @property
     def approved_answer_count(self):
@@ -130,6 +138,16 @@ class Answer(db.Model):
     author = db.relationship("User", back_populates="answers", foreign_keys=[author_id])
     approved_by = db.relationship("User", foreign_keys=[approved_by_id])
     question = db.relationship("Question", back_populates="answers")
+
+
+class QuestionAttachment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False, index=True)
+    filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    uploaded_at = db.Column(db.DateTime(timezone=True), default=utcnow)
+
+    question = db.relationship("Question", back_populates="attachments")
 
 
 class ExpertProfile(db.Model):

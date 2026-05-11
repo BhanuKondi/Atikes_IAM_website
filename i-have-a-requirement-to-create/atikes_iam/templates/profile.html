@@ -13,12 +13,12 @@
   </article>
 
   <div class="profile-grid">
-    <article class="panel">
+    <article class="panel" id="points">
       <h2>Q&amp;A Points</h2>
       <div class="points">{{ points }}</div>
       <p>{{ approved_answers }} approved answers and {{ approved_questions }} approved questions.</p>
     </article>
-    <article class="panel">
+    <article class="panel" id="notifications">
       <h2>Notifications</h2>
       {% for item in notifications %}
         <p class="notice-line">{{ item }}</p>

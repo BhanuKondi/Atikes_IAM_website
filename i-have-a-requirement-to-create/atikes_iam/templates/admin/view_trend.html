@@ -7,6 +7,9 @@
       <span>{{ trend.category }}</span>
       <time>{{ trend.published_at.strftime("%d %b %Y") }}</time>
     </div>
+    {% if trend.image_path or trend.image_url %}
+      <img class="trend-detail-image" src="{{ url_for('static', filename=trend.image_path) if trend.image_path else trend.image_url }}" alt="">
+    {% endif %}
     <h1>{{ trend.title }}</h1>
     <p>{{ trend.summary or "No summary is available yet." }}</p>
     <small>{{ trend.source.name }} - {{ trend.source_domain }}</small>

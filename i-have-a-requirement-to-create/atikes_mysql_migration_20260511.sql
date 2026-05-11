@@ -1,19 +1,8 @@
--- ATIKES IAM migration for existing MySQL databases
--- Use this when the app code has been updated but you do not want to drop/recreate data.
-
 USE atikes_iam;
-
-ALTER TABLE `trend`
-  ADD COLUMN `generated_content` TEXT NULL AFTER `summary`;
 
 ALTER TABLE `trend`
   ADD COLUMN `image_url` VARCHAR(700) DEFAULT '' AFTER `generated_content`,
   ADD COLUMN `image_path` VARCHAR(500) DEFAULT '' AFTER `image_url`;
-
-ALTER TABLE `question`
-  ADD COLUMN `version` VARCHAR(80) DEFAULT '' AFTER `tags`,
-  ADD COLUMN `attachment_filename` VARCHAR(255) DEFAULT '' AFTER `version`,
-  ADD COLUMN `attachment_path` VARCHAR(500) DEFAULT '' AFTER `attachment_filename`;
 
 CREATE TABLE IF NOT EXISTS `question_attachment` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -27,3 +16,4 @@ CREATE TABLE IF NOT EXISTS `question_attachment` (
     FOREIGN KEY (`question_id`) REFERENCES `question` (`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

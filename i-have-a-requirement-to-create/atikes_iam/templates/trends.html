@@ -29,6 +29,9 @@
   <div class="trend-grid">
     {% for trend in trends %}
       <article class="trend-card">
+        {% if trend.image_path or trend.image_url %}
+          <img class="trend-card-image" src="{{ url_for('static', filename=trend.image_path) if trend.image_path else trend.image_url }}" alt="">
+        {% endif %}
         <div class="trend-meta">
           <span>{{ trend.category }}</span>
           <time>{{ trend.published_at.strftime("%d %b %Y") }}</time>

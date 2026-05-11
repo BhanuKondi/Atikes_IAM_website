@@ -12,6 +12,10 @@
 
 <section class="content-shell two-col">
   <div class="question-list">
+    <form class="inline-search" action="{{ url_for('qa.questions') }}">
+      <input name="q" value="{{ search }}" placeholder="Search Q&A">
+      <button class="primary-button" type="submit">Search</button>
+    </form>
     {% for question in questions %}
       <article class="question-card">
         <div class="answer-count">

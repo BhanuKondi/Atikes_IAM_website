@@ -39,20 +39,22 @@ def generate_trend_content(trend):
     article_text = _fetch_source_text(trend.url)
     base = _clean_text(article_text or trend.summary or trend.title)
     sentences = _sentences(base)
-    summary = _build_summary(sentences)
-    takeaways = _build_takeaways(sentences)
+    about = _section(sentences, 0, "The article discusses an IAM and security development that identity teams should review.")
+    subject = _section(sentences, 1, "The subject is connected to identity governance, authentication, access control, and operational risk.")
+    happened = _section(sentences, 2, "The article explains a change, concern, or recommendation that may affect enterprise IAM programs.")
+    conclusion = _section(sentences, 3, "The conclusion is that IAM teams should evaluate the impact and convert the learning into practical controls.")
 
     return (
         f"{trend.title}\n\n"
-        f"Summary\n"
-        f"{summary}\n\n"
-        f"Why this matters for IAM teams\n"
-        f"This update is relevant to identity teams because it may affect governance, access reviews, "
-        f"authentication policy, privileged access, lifecycle automation, and compliance evidence. "
-        f"IAM leaders should review whether current controls across SailPoint, Okta, Saviynt, Ping Identity, "
-        f"cloud IAM, and PAM platforms already address the risks described here.\n\n"
-        f"Recommended actions\n"
-        f"{takeaways}"
+        f"What this article is about\n"
+        f"{about}\n\n"
+        f"Main subject\n"
+        f"{subject}\n\n"
+        f"What happened\n"
+        f"{happened}\n\n"
+        f"Conclusion\n"
+        f"{conclusion} For ATIKES readers, the practical takeaway is to review access governance, "
+        f"authentication, privileged access, lifecycle automation, and compliance controls against this trend."
     )
 
 
@@ -90,25 +92,12 @@ def _sentences(text):
     return clean[:24]
 
 
-def _build_summary(sentences):
+def _section(sentences, index, fallback):
     if not sentences:
-        return "This IAM trend is under review. The article highlights a change that identity teams should evaluate for access governance, authentication, and operational risk."
-    selected = sentences[:5]
-    return " ".join(selected)
-
-
-def _build_takeaways(sentences):
-    candidates = sentences[5:12] or sentences[:4]
-    if not candidates:
-        return (
-            "- Review the impact on identity governance and access controls.\n"
-            "- Check whether existing IAM policies already cover this scenario.\n"
-            "- Convert the learning into a practical control or automation improvement."
-        )
-    bullets = []
-    for sentence in candidates[:4]:
-        trimmed = sentence.strip()
-        if len(trimmed) > 180:
-            trimmed = trimmed[:177].rsplit(" ", 1)[0] + "..."
-        bullets.append(f"- {trimmed}")
-    return "\n".join(bullets)
+        return fallback
+    start = index * 2
+    selected = sentences[start : start + 2] or sentences[:2]
+    text = " ".join(selected)
+    if len(text) > 420:
+        text = text[:417].rsplit(" ", 1)[0] + "..."
+    return text

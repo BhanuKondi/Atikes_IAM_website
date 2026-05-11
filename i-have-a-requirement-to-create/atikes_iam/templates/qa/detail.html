@@ -19,6 +19,9 @@
     {% if question.attachment_path %}
       <a class="attachment-link" href="{{ url_for('static', filename=question.attachment_path) }}" target="_blank" rel="noopener">{{ question.attachment_filename }}</a>
     {% endif %}
+    {% for attachment in question.attachments %}
+      <a class="attachment-link" href="{{ url_for('static', filename=attachment.file_path) }}" target="_blank" rel="noopener">{{ attachment.filename }}</a>
+    {% endfor %}
     <small>Asked by {{ question.author.name }} on {{ question.created_at.strftime("%d %b %Y") }}</small>
   </article>
 

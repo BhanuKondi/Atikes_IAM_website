@@ -1,12 +1,14 @@
 from functools import wraps
+from pathlib import Path
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from ..extensions import db
 from ..models import Question, Trend, utcnow
 from ..services.content_generation import generate_trend_content
 from ..services.experts import refresh_expert_profile
+from werkzeug.utils import secure_filename
 
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -68,8 +70,10 @@ def edit_trend(trend_id):
         trend.title = request.form.get("title", "").strip() or trend.title
         trend.summary = request.form.get("summary", "").strip()
         trend.generated_content = request.form.get("generated_content", "").strip()
+        trend.image_url = request.form.get("image_url", "").strip()
         trend.category = request.form.get("category", "").strip() or trend.category
         trend.url = request.form.get("url", "").strip() or trend.url
+        _save_trend_image(trend)
         if request.form.get("action") == "approve":
             approve_trend_record(trend)
             flash("Trend approved and published.", "success")
@@ -130,3 +134,19 @@ def approve_question_record(question):
     question.approved_by = current_user
     refresh_expert_profile(question.author)
     db.session.commit()
+
+
+def _save_trend_image(trend):
+    upload = request.files.get("image")
+    if not upload or not upload.filename:
+        return
+    filename = secure_filename(upload.filename)
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if extension not in {"jpg", "jpeg", "png", "webp", "gif"}:
+        flash("Trend image skipped. Please upload JPG, PNG, WEBP, or GIF.", "error")
+        return
+    upload_dir = Path(current_app.root_path) / "static" / "uploads" / "trends"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    stored_name = f"trend-{trend.id}-{filename}"
+    upload.save(upload_dir / stored_name)
+    trend.image_path = f"uploads/trends/{stored_name}"
