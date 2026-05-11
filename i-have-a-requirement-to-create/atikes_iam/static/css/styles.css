@@ -51,7 +51,7 @@ a {
 
 .brand-logo {
   display: block;
-  width: 178px;
+  width: 150px;
   height: auto;
 }
 
@@ -232,8 +232,8 @@ a {
 }
 
 .home-hero {
-  width: min(900px, calc(100% - 56px));
-  min-height: 380px;
+  width: min(820px, calc(100% - 72px));
+  min-height: 340px;
   margin: 24px auto 0;
   border-radius: 8px;
 }
@@ -258,7 +258,7 @@ a {
 
 .home-slider {
   position: relative;
-  min-height: 280px;
+  min-height: 250px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -269,8 +269,8 @@ a {
   display: grid;
   align-content: center;
   justify-items: start;
-  gap: 18px;
-  padding: 34px 64px 48px;
+  gap: 12px;
+  padding: 28px 58px 42px;
   color: #fff;
   text-align: left;
   opacity: 0;
@@ -290,7 +290,7 @@ a {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 30%;
+  width: 24%;
   content: "";
   background:
     radial-gradient(circle at 80% 40%, rgba(249, 115, 22, 0.48), transparent 38%),
@@ -299,18 +299,26 @@ a {
 }
 
 .feature-slide h1 {
-  max-width: 560px;
-  font-size: clamp(28px, 4vw, 46px);
-  line-height: 1.08;
+  display: -webkit-box;
+  max-width: 500px;
+  overflow: hidden;
+  font-size: clamp(24px, 3.2vw, 38px);
+  line-height: 1.12;
   text-transform: uppercase;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .feature-slide p {
-  max-width: 500px;
+  display: -webkit-box;
+  max-width: 460px;
+  overflow: hidden;
   color: rgba(255, 255, 255, 0.78);
-  font-size: 16px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.45;
   margin: 0;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .feature-slide strong,
@@ -348,10 +356,10 @@ a {
 }
 
 .feature-slide p {
-  max-width: 620px;
+  max-width: 460px;
   margin: 0;
   color: rgba(255, 255, 255, 0.78);
-  font-size: 22px;
+  font-size: 14px;
 }
 
 .searchbar {
@@ -552,6 +560,13 @@ a {
 .expert-card p {
   color: var(--muted);
   line-height: 1.55;
+}
+
+.trend-item p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
 }
 
 .trend-item small,
@@ -1179,12 +1194,12 @@ a {
   }
 
   .home-hero {
-    width: min(100% - 28px, 900px);
-    min-height: 440px;
+    width: min(100% - 28px, 820px);
+    min-height: 400px;
   }
 
   .home-slider {
-    min-height: 360px;
+    min-height: 320px;
   }
 
   .feature-slide {
@@ -1192,11 +1207,11 @@ a {
   }
 
   .feature-slide h1 {
-    font-size: clamp(28px, 9vw, 44px);
+    font-size: clamp(24px, 8vw, 36px);
   }
 
   .feature-slide p {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .searchbar,

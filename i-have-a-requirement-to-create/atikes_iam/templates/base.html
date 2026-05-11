@@ -21,12 +21,12 @@
       <a class="{{ 'active' if request.blueprint == 'qa' }}" href="{{ url_for('qa.questions') }}">Q&amp;A</a>
       <a class="{{ 'active' if request.blueprint == 'experts' }}" href="{{ url_for('experts.directory') }}">Experts</a>
       <a class="{{ 'active' if request.blueprint == 'events' }}" href="{{ url_for('events.list_events') }}">Events</a>
-      <form class="nav-search" action="{{ url_for('main.search') }}">
-        <input name="q" placeholder="Search all">
-      </form>
       {% if current_user.is_authenticated and current_user.is_admin %}
         <a class="{{ 'active' if request.blueprint == 'admin' }}" href="{{ url_for('admin.dashboard') }}">Admin</a>
       {% endif %}
+      <form class="nav-search" action="{{ url_for('main.search') }}">
+        <input name="q" placeholder="Search all">
+      </form>
     </nav>
     <div class="account">
       {% if current_user.is_authenticated %}
