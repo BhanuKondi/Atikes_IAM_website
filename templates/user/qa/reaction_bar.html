@@ -1,0 +1,9 @@
+<div class="qa-reaction-bar">
+  {% for key, symbol, label in reaction_choices %}
+    {% set reaction = reactions.get(key, {"count": 0, "selected": False}) %}
+    <button class="{{ 'active' if reaction.selected }}" type="button" data-react-type="{{ target_type }}" data-react-id="{{ target_id }}" data-reaction-type="{{ key }}" title="{{ label }}">
+      <span>{{ symbol }}</span>
+      <strong>{{ reaction.count }}</strong>
+    </button>
+  {% endfor %}
+</div>

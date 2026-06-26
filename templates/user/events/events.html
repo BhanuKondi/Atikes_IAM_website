@@ -1,0 +1,70 @@
+﻿{% extends "layouts/base.html" %}
+{% block title %}Upcoming IAM Events - ATIKES{% endblock %}
+{% block content %}
+<section class="page-hero compact">
+  <div>
+    <p class="eyebrow">IAM calendar</p>
+    <h1>Upcoming Events</h1>
+  </div>
+  {% if current_user.is_authenticated and current_user.is_admin %}
+    <a class="primary-button" href="{{ url_for('events.new_event') }}">Add Event</a>
+  {% endif %}
+</section>
+
+<section class="content-shell events-shell">
+  <div class="master-detail" data-event-browser>
+    <aside class="master-list" aria-label="Event list">
+      {% for event in events %}
+        <button
+          class="master-list-item event-list-item {{ 'active' if loop.first }}"
+          type="button"
+          data-event-trigger="{{ event.id }}"
+        >
+          <time>
+            <strong>{{ event.starts_at.strftime("%d") }}</strong>
+            <span>{{ event.starts_at.strftime("%b %Y") }}</span>
+          </time>
+          <span>
+            <strong>{{ event.title }}</strong>
+            <small>{{ event.event_type }} - {{ event.location }}</small>
+          </span>
+        </button>
+      {% else %}
+        <p class="empty">No upcoming events are published yet.</p>
+      {% endfor %}
+    </aside>
+
+    <div class="detail-panel event-detail-stack">
+      {% for event in events %}
+        <article class="event-detail {{ '' if loop.first else 'hidden' }}" data-event-detail="{{ event.id }}">
+          <div class="event-detail-head">
+            <time>
+              <strong>{{ event.starts_at.strftime("%d") }}</strong>
+              <span>{{ event.starts_at.strftime("%b %Y") }}</span>
+            </time>
+            <div>
+              <span class="chip active">{{ event.event_type }}</span>
+              <h2>{{ event.title }}</h2>
+              <small>{{ event.organizer }} - {{ event.location }}</small>
+            </div>
+          </div>
+          <p>{{ event.description }}</p>
+          <div class="button-row">
+            {% if event.registration_url %}
+              <a class="primary-button" href="{{ event.registration_url }}" target="_blank" rel="noopener">Register</a>
+            {% endif %}
+            {% if current_user.is_authenticated and current_user.is_admin %}
+              <a class="ghost-button" href="{{ url_for('events.edit_event', event_id=event.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('events.delete_event', event_id=event.id) }}">
+                <button class="ghost-button danger" type="submit">Remove</button>
+              </form>
+            {% endif %}
+          </div>
+        </article>
+      {% else %}
+        <div class="empty big">No upcoming events are published yet. Add records to the upcoming event table and they will appear here.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 115" role="img" aria-label="ATIKES">
+  <defs>
+    <linearGradient id="blueMark" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#075fe0"/>
+      <stop offset="0.58" stop-color="#0739b4"/>
+      <stop offset="1" stop-color="#080066"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(8 8)">
+    <path fill="url(#blueMark)" d="M6 79 45 10c8-14 29-8 28 8l-4 45 15-27c7-12 25-9 28 5l13 56H97l-7-30-21 39c-5 8-16 10-23 3L6 79Z"/>
+    <path fill="#111" d="m73 18 20 22-16 28-9-7 5-43Z"/>
+    <path fill="#050061" d="M6 79h42l21-39 26 57H27C10 97-1 88 6 79Z"/>
+  </g>
+  <g fill="#073fbd" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="52" font-weight="900" letter-spacing="2">
+    <text x="145" y="75">ATIKES</text>
+  </g>
+</svg>

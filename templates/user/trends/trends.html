@@ -1,0 +1,93 @@
+﻿{% extends "layouts/base.html" %}
+{% block title %}Live IAM Trends Â· ATIKES{% endblock %}
+{% block content %}
+<section class="page-hero slim trends-hero">
+  <div>
+    <h1>Top IAM Trends</h1>
+  </div>
+  <a class="primary-button" href="{{ url_for('trends.list_trends', refresh=1) }}">Refresh Now</a>
+</section>
+
+<section class="content-shell review-shell trends-shell">
+  {% if errors %}
+    <div class="notice">Some sources could not be reached this time. Available sources are still shown below.</div>
+  {% endif %}
+
+  <div class="review-board">
+    <h2>Top Trends</h2>
+    {% if current_user.is_authenticated and current_user.is_admin %}
+      <div class="admin-tabs review-tabs">
+        <a class="tab {{ 'active' if active_tab == 'published' }}" href="{{ url_for('trends.list_trends', tab='published', q=search) }}">Published <span>{{ published_trends|length }}</span></a>
+        <a class="tab {{ 'active' if active_tab == 'pending' }}" href="{{ url_for('trends.list_trends', tab='pending', q=search) }}">Pending <span>{{ pending_trends|length }}</span></a>
+      </div>
+    {% endif %}
+
+    <div class="master-detail review-master-detail">
+      <aside class="master-list review-master-list" aria-label="Trend list">
+        {% for trend in trends %}
+          <a class="master-list-item {{ 'active' if selected_trend and selected_trend.id == trend.id }}" href="{{ url_for('trends.list_trends', tab=active_tab, trend_id=trend.id, q=search) }}">
+            <strong>{{ trend.title }}</strong>
+            <small>{{ trend.category }}{% if trend.source %} - {{ trend.source.name }}{% endif %}</small>
+          </a>
+        {% else %}
+          <p class="empty">No {{ active_tab }} trends.</p>
+        {% endfor %}
+      </aside>
+
+      <article class="detail-panel review-detail-panel">
+        {% if selected_trend %}
+          <h2>{{ selected_trend.title }}</h2>
+          <p>{{ selected_trend.summary or "Open the source article for the full update." }}</p>
+
+          <dl class="detail-facts">
+            <div><dt>Source:</dt><dd>{{ selected_trend.source.name if selected_trend.source else selected_trend.source_domain }}</dd></div>
+            <div><dt>Collected On:</dt><dd>{{ selected_trend.fetched_at.strftime("%d %b %Y, %I:%M %p") if selected_trend.fetched_at else selected_trend.published_at.strftime("%d %b %Y") }}</dd></div>
+            <div><dt>Category:</dt><dd>{{ selected_trend.category }}</dd></div>
+            <div><dt>Status:</dt><dd>{{ selected_trend.status|title }}</dd></div>
+          </dl>
+
+          {% if current_user.is_authenticated and current_user.is_admin and active_tab == "pending" %}
+            <div class="inline-generated-panel" data-inline-editor>
+              {% if selected_trend.generated_content %}
+                <h3>Generated Content</h3>
+                <div class="generated-content-box" data-generated-preview>{{ selected_trend.generated_content }}</div>
+                <form class="generated-edit-form hidden" method="post" action="{{ url_for('admin_trends.update_trend_content', trend_id=selected_trend.id) }}" data-generated-form>
+                  <input type="hidden" name="next" value="{{ url_for('trends.list_trends', tab='pending', trend_id=selected_trend.id, q=search) }}">
+                  <label>Edit generated content
+                    <textarea name="generated_content" rows="10" required>{{ selected_trend.generated_content }}</textarea>
+                  </label>
+                  <div class="button-row">
+                    <button class="ghost-button" type="button" data-inline-cancel>Cancel</button>
+                    <button class="primary-button" type="submit">Save</button>
+                  </div>
+                </form>
+                <div class="button-row review-buttons" data-generated-actions>
+                  <button class="primary-button" type="button" data-inline-edit>Edit</button>
+                  <form method="post" action="{{ url_for('admin_approvals.approve_trend', trend_id=selected_trend.id) }}">
+                    <button class="primary-button success-button" type="submit">Post</button>
+                  </form>
+                </div>
+              {% else %}
+                <p class="empty">Click Generate to create website content for this pending trend.</p>
+                <div class="button-row review-buttons">
+                  <form method="post" action="{{ url_for('admin_trends.generate_trend', trend_id=selected_trend.id) }}">
+                    <input type="hidden" name="next" value="{{ url_for('trends.list_trends', tab='pending', trend_id=selected_trend.id, q=search) }}">
+                    <button class="primary-button" type="submit">Generate</button>
+                  </form>
+                </div>
+              {% endif %}
+            </div>
+          {% else %}
+            <section class="published-generated-block">
+              <h3>Generated Content</h3>
+              <div class="generated-content-box published-content">{{ selected_trend.generated_content or selected_trend.summary or "Generated content is not available for this trend yet." }}</div>
+            </section>
+          {% endif %}
+        {% else %}
+          <div class="empty big">No IAM trend items were returned from the configured live feeds.</div>
+        {% endif %}
+      </article>
+    </div>
+  </div>
+</section>
+{% endblock %}

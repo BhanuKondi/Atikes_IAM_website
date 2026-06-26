@@ -1,0 +1,111 @@
+{% extends "layouts/base.html" %}
+{% block title %}IAM Q&A - ATIKES{% endblock %}
+{% block content %}
+<section class="qa-page qa-app" data-qa-app>
+  <aside class="qa-sidebar" aria-label="Q&A filters">
+    <div class="qa-filter-group">
+      <h2>All Questions</h2>
+      <button class="qa-side-link active" type="button" data-product-filter="">All Questions <strong data-all-count>{{ approved_total }}</strong></button>
+      {% for product in products %}
+        {% if product.slug != "other" %}
+          <button class="qa-side-link" type="button" data-product-filter="{{ product.id }}">
+            <span class="qa-dot {{ ['green', 'violet', 'orange', 'slate'][loop.index0 % 4] }}"></span>
+            <span>{{ "IdentityNow" if product.slug == "identity-security-cloud" else product.name }}</span>
+            <strong>{{ product.questions.filter_by(status="approved").count() }}</strong>
+          </button>
+        {% endif %}
+      {% endfor %}
+      {% for product in products if product.slug == "other" %}
+        {% for topic in product.topics.all() %}
+          {% if topic.name not in ["General", "Integration", "Troubleshooting"] %}
+            <button class="qa-side-link" type="button" data-topic-filter="{{ topic.id }}" data-sidebar-other-topic>
+              <span class="qa-dot slate"></span>
+              <span>{{ topic.name }}</span>
+              <strong>{{ topic.questions.filter_by(status="approved").count() }}</strong>
+            </button>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+    <div class="qa-filter-group hidden" data-topic-filter-wrap>
+      <h2>Topics</h2>
+      <button class="qa-side-link active" type="button" data-topic-filter="">All Topics</button>
+      <div data-topic-filter-list></div>
+    </div>
+  </aside>
+
+  <div class="qa-main">
+    <div class="qa-toolbar">
+      {% if current_user.is_authenticated and current_user.is_admin %}
+        <div class="qa-status-tabs">
+          <button class="qa-status-tab published active" type="button" data-status-filter="approved">Published</button>
+          <button class="qa-status-tab pending" type="button" data-status-filter="pending">Pending Queue</button>
+        </div>
+      {% else %}
+        <div class="qa-status-title">Community Questions</div>
+      {% endif %}
+      <div class="qa-toolbar-actions">
+        <select aria-label="Question filter" data-solved-filter>
+          <option value="all">All Questions</option>
+          <option value="solved">Solved Questions</option>
+          <option value="unsolved">Unsolved Questions</option>
+        </select>
+        <button class="qa-ask-button" type="button" data-show-ask>Ask Question</button>
+      </div>
+    </div>
+
+    <div class="qa-inline-message hidden" data-qa-message></div>
+    <div class="qa-workspace" data-qa-workspace>
+      <div class="qa-card-list" data-question-list></div>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="qa-products-data">
+[
+{% for product in products %}
+  {
+    "id": {{ product.id }},
+    "name": {{ product.name|tojson }},
+    "slug": {{ product.slug|tojson }},
+    "count": {{ product.questions.filter_by(status="approved").count() }},
+    "versions": [
+      {% for version in product.versions.all() %}
+        {"id": {{ version.id }}, "label": {{ version.label|tojson }}}{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ],
+    "topics": [
+      {% for topic in product.topics.all() %}
+        {"id": {{ topic.id }}, "name": {{ topic.name|tojson }}, "count": {{ topic.questions.filter_by(status="approved").count() }}}{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  }{% if not loop.last %},{% endif %}
+{% endfor %}
+]
+</script>
+<script type="application/json" id="qa-questions-data">{{ initial_questions|tojson }}</script>
+<script type="application/json" id="qa-config-data">
+{
+  "isAuthenticated": {{ current_user.is_authenticated|tojson }},
+  "isAdmin": {{ (current_user.is_authenticated and current_user.is_admin)|tojson }},
+  "loginUrl": {{ url_for("auth.login", next=request.full_path)|tojson }},
+  "questionsApi": {{ url_for("qa.api_questions")|tojson }},
+  "productsApi": {{ url_for("qa.api_products")|tojson }},
+  "createQuestionApi": {{ url_for("qa.create_question")|tojson }},
+  "detailApiBase": {{ "/qa/api/questions/"|tojson }},
+  "answerApiSuffix": {{ "/answers"|tojson }},
+  "questionReactionSuffix": {{ "/reactions"|tojson }},
+  "answerReactionBase": {{ "/qa/api/answers/"|tojson }},
+  "answerCommentBase": {{ "/qa/answers/"|tojson }},
+  "saveSuffix": {{ "/save"|tojson }},
+  "solutionSuffix": {{ "/solution"|tojson }},
+  "approveBase": {{ "/qa/api/admin/questions/"|tojson }},
+  "difficulties": {{ difficulty_options|tojson }},
+  "reactionChoices": [
+    {% for key, symbol, label in reaction_choices %}
+      {"key": {{ key|tojson }}, "symbol": {{ symbol|tojson }}, "label": {{ label|tojson }}}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endblock %}

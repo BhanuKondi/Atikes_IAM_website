@@ -1,0 +1,76 @@
+﻿{% extends "layouts/base.html" %}
+{% block title %}Admin Dashboard - ATIKES{% endblock %}
+{% block content %}
+<section class="page-hero compact admin-hero">
+  <div>
+    <p class="eyebrow">Admin mode</p>
+    <h1>Dashboard</h1>
+  </div>
+</section>
+
+<section class="content-shell admin-console">
+  <aside class="admin-sidebar">
+    <a class="{{ 'active' if active_view == 'dashboard' }}" href="{{ url_for('admin_dashboard.dashboard', view='dashboard') }}">Dashboard</a>
+    <div class="sidebar-group">
+      <strong>Settings</strong>
+      <a class="{{ 'active' if active_view == 'users' }}" href="{{ url_for('admin_dashboard.dashboard', view='users') }}">User Access</a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    {% if active_view == "users" %}
+      <div class="panel">
+        <div class="panel-head">
+          <h2>User Access</h2>
+          <span class="status-inline">{{ stats.users }} users</span>
+        </div>
+        <div class="user-access-list">
+          {% for row in user_rows %}
+            <article class="user-access-card">
+              <div>
+                <h3>{{ row.user.name }}</h3>
+                <p>{{ row.user.email }}</p>
+                <small>{{ row.user.title }}{% if row.user.company %} - {{ row.user.company }}{% endif %}</small>
+              </div>
+              <div class="user-points">
+                <strong>{{ row.points }}</strong>
+                <span>points</span>
+                <small>{{ row.approved_answers }} answers, {{ row.approved_questions }} questions</small>
+              </div>
+              <form method="post" action="{{ url_for('admin_users.manage_user', user_id=row.user.id) }}">
+                <input type="hidden" name="action" value="role">
+                <label>Access
+                  <select name="role">
+                    <option value="user" {{ 'selected' if row.user.role == 'user' }}>User</option>
+                    <option value="admin" {{ 'selected' if row.user.role == 'admin' }}>Admin</option>
+                  </select>
+                </label>
+                <button class="ghost-button" type="submit">Update</button>
+              </form>
+              <form method="post" action="{{ url_for('admin_users.manage_user', user_id=row.user.id) }}">
+                <input type="hidden" name="action" value="password">
+                <label>New password
+                  <input name="password" type="password" minlength="8" placeholder="At least 8 characters">
+                </label>
+                <button class="primary-button" type="submit">Reset</button>
+              </form>
+            </article>
+          {% else %}
+            <p class="empty">No users found.</p>
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="admin-stat-grid">
+        <article><strong>{{ stats.users }}</strong><span>Total Users</span></article>
+        <article><strong>{{ stats.admins }}</strong><span>Admins</span></article>
+        <article><strong>{{ stats.published_trends }}</strong><span>Published Trends</span></article>
+        <article><strong>{{ stats.published_questions }}</strong><span>Published Questions</span></article>
+        <article><strong>{{ stats.published_answers }}</strong><span>Published Answers</span></article>
+        <article><strong>{{ stats.experts }}</strong><span>Listed Experts</span></article>
+        <article><strong>{{ stats.events }}</strong><span>Published Events</span></article>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

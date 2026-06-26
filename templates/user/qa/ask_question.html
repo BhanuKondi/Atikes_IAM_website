@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+{% block title %}Ask IAM Question - ATIKES{% endblock %}
+{% block content %}
+<section class="form-page qa-form-page">
+  <form class="form-card qa-form-card" method="post" enctype="multipart/form-data">
+    <p class="eyebrow">IAM Q&amp;A</p>
+    <h1>Ask a Question</h1>
+
+    <div class="qa-form-grid">
+      <label>Product
+        <select name="product" required>
+          <option value="">Select product</option>
+          {% for product in product_options %}
+            <option value="{{ product }}">{{ product }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>Version
+        <input name="version" placeholder="Example: IIQ 8.4, ISC, Okta OIE">
+      </label>
+    </div>
+
+    <label>Topic
+      <select name="tag_choice" data-tag-select required>
+        <option value="">Select topic</option>
+        {% for tag in tag_options %}
+          <option value="{{ tag }}">{{ tag }}</option>
+        {% endfor %}
+        <option value="Other">Other</option>
+      </select>
+    </label>
+
+    <label class="hidden" data-other-tag-wrap>Other topic
+      <input name="other_tag" data-other-tag placeholder="Enter another topic">
+    </label>
+
+    <label>Question title
+      <input name="title" required minlength="10" placeholder="Example: ISC workflow trigger for failed access request approval">
+    </label>
+
+    <label>Description
+      <textarea name="body" required minlength="20" rows="7" data-paste-image-target placeholder="Share the business context, current issue, expected result, and what you already tried. You can paste screenshots here."></textarea>
+    </label>
+
+    <label>Do you want error logs?
+      <select name="wants_error_logs" data-error-log-select required>
+        <option value="">Select</option>
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+    </label>
+
+    <label class="hidden" data-error-log-wrap>Error logs
+      <textarea name="error_logs" rows="5" data-error-log-input placeholder="Paste the error logs here"></textarea>
+    </label>
+
+    <label>Attachments (.pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip)
+      <input type="file" name="attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip">
+    </label>
+
+    <button class="primary-button" type="submit">Submit for Review</button>
+  </form>
+</section>
+{% endblock %}

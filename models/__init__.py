@@ -1,0 +1,21 @@
+﻿from models.db import db, login_manager
+from models.models import (
+    Answer,
+    AnswerAttachment,
+    AnswerComment,
+    AnswerReaction,
+    ExpertProfile,
+    Product,
+    ProductVersion,
+    Question,
+    QuestionAttachment,
+    QuestionReaction,
+    QuestionView,
+    SavedQuestion,
+    Topic,
+    Trend,
+    TrendSource,
+    UpcomingEvent,
+    User,
+    utcnow,
+)

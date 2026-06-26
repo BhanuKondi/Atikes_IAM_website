@@ -1,0 +1,13 @@
+<article class="answer-card qa-answer-card {{ 'accepted' if question.solution_answer_id == answer.id else '' }}" id="answer-{{ answer.id }}">
+  {% if question.solution_answer_id == answer.id %}
+    <span class="solution-badge">Accepted Solution</span>
+  {% endif %}
+  <div class="answer-author">
+    <span class="avatar">{{ answer.author[:1] }}</span>
+    <div>
+      <strong>{{ answer.author }}</strong>
+      <small>{{ answer.author_tag }} · {{ answer.created }}</small>
+    </div>
+  </div>
+  <div class="generated-content">{{ answer.content }}</div>
+</article>

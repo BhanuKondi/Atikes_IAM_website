@@ -1,0 +1,101 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ATIKES IAM Community{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('home.home') }}" aria-label="ATIKES home">
+  <img class="brand-logo" src="{{ url_for('static', filename='images/logo2.png') }}" alt="ATIKES">
+  <span class="brand-name">ATIKES</span>
+</a>
+    <button class="nav-toggle" data-nav-toggle aria-label="Open navigation">Menu</button>
+    <nav class="nav" data-nav>
+      <a class="{{ 'active' if request.endpoint == 'home.home' }}" href="{{ url_for('home.home') }}">Home</a>
+      <a class="{{ 'active' if request.blueprint == 'trends' }}" href="{{ url_for('trends.list_trends') }}">Trends</a>
+      <a class="{{ 'active' if request.blueprint == 'qa' }}" href="{{ url_for('qa.questions') }}">Q&amp;A</a>
+      <a class="{{ 'active' if request.blueprint == 'experts' }}" href="{{ url_for('experts.directory') }}">Experts</a>
+      <a class="{{ 'active' if request.blueprint == 'events' }}" href="{{ url_for('events.list_events') }}">Events</a>
+      {% if current_user.is_authenticated and current_user.is_admin %}
+        <a class="{{ 'active' if request.blueprint in ['admin_dashboard', 'admin_users', 'admin_trends', 'admin_qa', 'admin_approvals', 'admin_events'] }}" href="{{ url_for('admin_dashboard.dashboard') }}">Admin</a>
+      {% endif %}
+      <form class="nav-search" action="{{ url_for('search.search') }}">
+        <input name="q" placeholder="Search all">
+      </form>
+    </nav>
+    <div class="account">
+      {% if current_user.is_authenticated %}
+        <button class="profile-trigger" type="button" data-profile-toggle>
+          <span class="avatar">{{ current_user.name[:1] }}</span>
+        </button>
+        <div class="profile-menu" data-profile-menu>
+          <div class="profile-menu-head">
+            <span class="avatar">{{ current_user.name[:1] }}</span>
+            <span>
+              <strong>{{ current_user.name }}</strong>
+              <small>{{ "Admin" if current_user.is_admin else "User" }}</small>
+            </span>
+          </div>
+          <a href="{{ url_for('profile.profile') }}"><span class="menu-icon" aria-hidden="true">◉</span>View Profile</a>
+          <a href="{{ url_for('profile.profile') }}#notifications"><span class="menu-icon" aria-hidden="true">!</span>Notifications</a>
+          <a href="{{ url_for('profile.profile') }}#points"><span class="menu-icon" aria-hidden="true">★</span>Q&amp;A Points</a>
+          <a class="signout" href="{{ url_for('auth.logout') }}"><span class="menu-icon" aria-hidden="true">↪</span>Sign out</a>
+        </div>
+      {% else %}
+        <a class="ghost-button" href="{{ url_for('auth.login') }}">Sign in</a>
+        <a class="ghost-button" href="{{ url_for('auth.register') }}">Join</a>
+      {% endif %}
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-wrap">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+    {% if request.endpoint != 'home.home' %}
+      <div class="back-bar">
+        <button class="primary-button" type="button" data-back>Back</button>
+      </div>
+    {% endif %}
+  </main>
+
+  <footer class="footer">
+    <div>
+       <a class="brand footer-brand" href="{{ url_for('home.home') }}">
+  <img class="brand-logo" src="{{ url_for('static', filename='images/logo.jpg') }}" alt="ATIKES">
+  <span class="brand-text">ATIKES</span>
+</a>
+      <p>Secure, streamline, automate, and govern identity programs with enterprise-grade IAM expertise.</p>
+    </div>
+    <div>
+      <h3>Platform</h3>
+      <a href="{{ url_for('trends.list_trends') }}">Live IAM trends</a>
+      <a href="{{ url_for('qa.questions') }}">Community Q&amp;A</a>
+      <a href="{{ url_for('experts.directory') }}">Expert directory</a>
+      <a href="{{ url_for('events.list_events') }}">Upcoming events</a>
+    </div>
+    <div>
+      <h3>ATIKES Focus</h3>
+      <span>Lifecycle management</span>
+      <span>Access reviews</span>
+      <span>PAM and RBAC</span>
+      <span>SailPoint</span>
+    </div>
+  </footer>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

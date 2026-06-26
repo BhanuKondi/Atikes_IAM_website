@@ -1,0 +1,37 @@
+﻿{% extends "layouts/base.html" %}
+{% block title %}Search - ATIKES{% endblock %}
+{% block content %}
+<section class="content-shell">
+  <form class="inline-search" action="{{ url_for('search.search') }}">
+    <input name="q" value="{{ query }}" placeholder="Search trends, Q&A, experts, events">
+    <button class="primary-button" type="submit">Search</button>
+  </form>
+
+  <div class="search-grid">
+    <article class="panel">
+      <h2>Trends</h2>
+      {% for trend in trends %}
+        <a class="result-row" href="{{ url_for('trends.trend_detail', trend_id=trend.id) }}">{{ trend.title }}</a>
+      {% else %}<p class="empty">No trend results.</p>{% endfor %}
+    </article>
+    <article class="panel">
+      <h2>Q&amp;A</h2>
+      {% for question in questions %}
+        <a class="result-row" href="{{ url_for('qa.question_detail', question_id=question.id) }}">{{ question.title }}</a>
+      {% else %}<p class="empty">No Q&amp;A results.</p>{% endfor %}
+    </article>
+    <article class="panel">
+      <h2>Experts</h2>
+      {% for expert in experts %}
+        <a class="result-row" href="{{ url_for('experts.directory') }}">{{ expert.display_name }} - {{ expert.title }}</a>
+      {% else %}<p class="empty">No expert results.</p>{% endfor %}
+    </article>
+    <article class="panel">
+      <h2>Events</h2>
+      {% for event in events %}
+        <a class="result-row" href="{{ url_for('events.list_events') }}">{{ event.title }}</a>
+      {% else %}<p class="empty">No event results.</p>{% endfor %}
+    </article>
+  </div>
+</section>
+{% endblock %}

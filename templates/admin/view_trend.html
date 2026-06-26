@@ -1,0 +1,36 @@
+﻿{% extends "layouts/base.html" %}
+{% block title %}Review Trend - ATIKES Admin{% endblock %}
+{% block content %}
+<section class="content-shell detail-shell admin-trend-preview">
+  <article class="question-detail">
+    <div class="trend-meta">
+      <span>{{ trend.category }}</span>
+      <time>{{ trend.published_at.strftime("%d %b %Y") }}</time>
+    </div>
+    {% if trend.image_path or trend.image_url %}
+      <img class="trend-detail-image" src="{{ url_for('static', filename=trend.image_path) if trend.image_path else trend.image_url }}" alt="">
+    {% endif %}
+    <h1>{{ trend.title }}</h1>
+    <p>{{ trend.summary or "No summary is available yet." }}</p>
+    <small>{{ trend.source.name }} - {{ trend.source_domain }}</small>
+  </article>
+
+  <article class="panel">
+    <div class="panel-head">
+      <h2>Generated Website Content</h2>
+      <form method="post" action="{{ url_for('admin_trends.generate_trend', trend_id=trend.id) }}">
+        <button class="primary-button" type="submit">Generate Content</button>
+      </form>
+    </div>
+    {% if trend.generated_content %}
+      <p class="generated-content">{{ trend.generated_content }}</p>
+      <form method="post" action="{{ url_for('admin_approvals.approve_trend', trend_id=trend.id) }}">
+        <button class="primary-button" type="submit">Post to Website</button>
+      </form>
+    {% else %}
+      <p class="empty">Generate content first. Admin can review it, edit if needed, and then post it to the website.</p>
+    {% endif %}
+    <a class="ghost-button" href="{{ url_for('admin_trends.edit_trend', trend_id=trend.id) }}">Edit Content</a>
+  </article>
+</section>
+{% endblock %}
