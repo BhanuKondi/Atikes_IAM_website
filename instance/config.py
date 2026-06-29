@@ -15,8 +15,8 @@ def build_database_uri():
     if db_engine == "sqlite":
         return f"sqlite:///{(BASE_DIR / 'instance' / 'atikes_iam.sqlite').as_posix()}"
 
-    user = os.getenv("MYSQL_USER", "root")
-    password = quote_plus(os.getenv("MYSQL_PASSWORD", "bhanu"))
+    user = os.getenv("MYSQL_USER", "hruser")
+    password = quote_plus(os.getenv("MYSQL_PASSWORD", "Hr@1234"))
     host = os.getenv("MYSQL_HOST", "127.0.0.1")
     port = os.getenv("MYSQL_PORT", "3306")
     database = os.getenv("MYSQL_DATABASE", "atikes_iam")
